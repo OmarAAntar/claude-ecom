@@ -1,0 +1,47 @@
+{
+  "name": "claude-ecom",
+  "version": "1.0.0",
+  "description": "E-commerce store audit suite. Scores your store /100 across CRO, product pages, offers, trust, mobile, copy, and competitors. Generates a PDF action plan.",
+  "author": "your-github-handle",
+  "license": "MIT",
+  "category": "ecommerce",
+  "skills": [
+    "ecom",
+    "ecom-audit",
+    "ecom-cro",
+    "ecom-products",
+    "ecom-competitors",
+    "ecom-performance",
+    "ecom-trust",
+    "ecom-offers",
+    "ecom-copy",
+    "ecom-mobile",
+    "ecom-retention"
+  ],
+  "commands": [
+    "/ecom",
+    "/ecom-audit",
+    "/ecom-cro",
+    "/ecom-products",
+    "/ecom-competitors",
+    "/ecom-performance",
+    "/ecom-trust",
+    "/ecom-offers",
+    "/ecom-copy",
+    "/ecom-mobile",
+    "/ecom-retention"
+  ],
+  "dependencies": {
+    "python": ">=3.10",
+    "pip": [
+      "weasyprint>=62.0",
+      "requests>=2.31",
+      "beautifulsoup4>=4.12",
+      "matplotlib>=3.8",
+      "numpy>=1.26",
+      "pillow>=10.0"
+    ]
+  },
+  "install_script": "install.sh",
+  "homepage": "https://github.com/your-handle/claude-ecom"
+}
