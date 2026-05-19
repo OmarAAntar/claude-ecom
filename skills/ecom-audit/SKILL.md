@@ -81,14 +81,20 @@ Flag these in a red "Fix Before Anything Else" box in the report.
 
 Write `ECOM-AUDIT-REPORT.md` and `ACTION-PLAN.md` to the current directory.
 
-Then run:
+Then delegate to the `ecom-report` agent (`agents/ecom-report.md`) which will:
+1. Run `scripts/extract_brand.py <url> --download-logo` to get brand colors and logo
+2. Run `scripts/ecom_report.py` with the full scores JSON and brand signals:
 ```
 scripts/ecom_report.py \
   --report ECOM-AUDIT-REPORT.md \
   --action-plan ACTION-PLAN.md \
+  --scores '{"overall": <score>, "categories": {...}}' \
   --url <url> \
   --platform <platform> \
-  --score <overall_score> \
+  --brand-color <primary_color> \
+  --store-name "<store_name>" \
+  --store-description "<description>" \
+  --logo <logo_path> \
   --output ecom-report.pdf
 ```
 

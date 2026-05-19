@@ -9,9 +9,12 @@ Usage:
         --scores '{"overall": 41, "categories": {...}}' \
         --url https://example.com \
         --platform shopify \
-        --output ecom-report.pdf
+        --output ecom-report.pdf \
+        [--store-name "My Store"] \
+        [--brand-color "#1d4ed8"] \
+        [--logo path/to/logo.png or https://example.com/logo.png]
 
-Dependencies: weasyprint, matplotlib, pillow
+Dependencies: weasyprint, matplotlib, pillow, requests
 """
 
 import argparse
@@ -41,6 +44,17 @@ def _score_color(score: int) -> str:
     return "#ef4444"       # red
 
 
+def _score_bg(score: int) -> str:
+    """Light background tint matching score color."""
+    if score >= 70:
+        return "#f0fdf4"
+    if score >= 50:
+        return "#fffbeb"
+    if score >= 30:
+        return "#fff7ed"
+    return "#fff1f2"
+
+
 def _score_label(score: int) -> str:
     if score >= 80:
         return "GOOD"
@@ -51,7 +65,68 @@ def _score_label(score: int) -> str:
     return "CRITICAL"
 
 
-def build_score_chart(scores: dict) -> str:
+def _score_tier(score: int) -> str:
+    """Descriptive tier label for the cover page."""
+    if score >= 80:
+        return "High-Performing Store"
+    if score >= 60:
+        return "Growing Store — Good Foundation"
+    if score >= 40:
+        return "Developing Store — Key Gaps Found"
+    if score >= 20:
+        return "Early-Stage Store — Significant Improvements Needed"
+    return "Critical Stage — Immediate Action Required"
+
+
+def _extract_store_name(report_md: str, url: str) -> str:
+    """Extract store name from first H1 in the report markdown, fallback to URL domain."""
+    m = re.search(r'^#\s+([^—\n\r]+?)(?:\s+[—–].*)?$', report_md, re.MULTILINE)
+    if m:
+        name = m.group(1).strip()
+        # Skip generic headings
+        generic = {'ecom audit report', 'ecom health audit report', 'audit report'}
+        if name and name.lower() not in generic:
+            return name
+    return url.replace("https://", "").replace("http://", "").split("/")[0]
+
+
+def _load_logo(logo: str) -> str | None:
+    """Load logo from file path or URL. Returns base64-encoded PNG/JPEG or None."""
+    if not logo:
+        return None
+    try:
+        if logo.startswith(("http://", "https://")):
+            import urllib.request
+            req = urllib.request.Request(logo, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = resp.read()
+        else:
+            with open(logo, "rb") as f:
+                data = f.read()
+        return base64.b64encode(data).decode()
+    except Exception as e:
+        print(f"Warning: could not load logo from {logo!r}: {e}", file=sys.stderr)
+        return None
+
+
+def _detect_logo_mime(logo_b64: str) -> str:
+    """Detect image MIME type from base64 content."""
+    try:
+        data = base64.b64decode(logo_b64[:16])
+        if data[:4] == b'\x89PNG':
+            return "image/png"
+        if data[:3] == b'\xff\xd8\xff':
+            return "image/jpeg"
+        if data[:4] in (b'GIF8', b'GIF9'):
+            return "image/gif"
+        if data[:4] == b'RIFF' or data[8:12] == b'WEBP':
+            return "image/webp"
+    except Exception:
+        pass
+    return "image/png"
+
+
+def build_score_chart(scores: dict, brand_color: str = "#1d4ed8") -> str:
     """Build a horizontal bar chart of category scores. Returns base64 PNG."""
     categories = list(scores.items())
     labels = [c[0] for c in categories]
@@ -80,38 +155,6 @@ def build_score_chart(scores: dict) -> str:
     plt.close()
     buf.seek(0)
     return base64.b64encode(buf.read()).decode()
-
-
-def build_gauge_svg(score: int) -> str:
-    """Build an SVG gauge for the overall score."""
-    color = _score_color(score)
-    label = _score_label(score)
-    pct = score / 100
-    # Simple arc gauge using SVG path
-    r = 70
-    cx, cy = 90, 90
-    start_angle = 210
-    end_angle = start_angle - pct * 240
-
-    def polar(angle_deg: float, radius: float):
-        import math
-        rad = math.radians(angle_deg)
-        return cx + radius * math.cos(rad), cy - radius * math.sin(rad)
-
-    x1, y1 = polar(start_angle, r)
-    x2, y2 = polar(end_angle, r)
-    large = 1 if (start_angle - end_angle) > 180 else 0
-
-    arc_bg_x, arc_bg_y = polar(start_angle - 240, r)
-    return f"""<svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
-  <path d="M {polar(210, r)[0]:.1f} {polar(210, r)[1]:.1f} A {r} {r} 0 1 0 {polar(-30, r)[0]:.1f} {polar(-30, r)[1]:.1f}"
-        fill="none" stroke="#f3f4f6" stroke-width="12" stroke-linecap="round"/>
-  <path d="M {x1:.1f} {y1:.1f} A {r} {r} 0 {large} 0 {x2:.1f} {y2:.1f}"
-        fill="none" stroke="{color}" stroke-width="12" stroke-linecap="round"/>
-  <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="32" font-weight="bold" fill="{color}">{score}</text>
-  <text x="{cx}" y="{cy + 26}" text-anchor="middle" font-size="10" fill="#9ca3af">/100</text>
-  <text x="{cx}" y="{cy + 42}" text-anchor="middle" font-size="9" font-weight="bold" fill="{color}">{label}</text>
-</svg>"""
 
 
 def md_to_html_body(md: str) -> str:
@@ -226,108 +269,170 @@ def _inline_md(text: str) -> str:
     return text
 
 
-def _build_css() -> str:
-    return """
-    @page {
+def _build_css(brand_color: str = "#1d4ed8") -> str:
+    return f"""
+    @page {{
         size: A4;
         margin: 20mm 18mm 20mm 18mm;
-        @bottom-center {
+        @bottom-center {{
             content: "Claude ECOM Audit Suite · " string(store-name) " · Page " counter(page);
             font-size: 8pt;
             color: #9ca3af;
-        }
-    }
-    body {
+        }}
+    }}
+    body {{
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 10pt;
         color: #111827;
         line-height: 1.6;
         margin: 0;
-    }
-    .cover {
+    }}
+    .cover {{
         page-break-after: always;
-        text-align: center;
-        padding-top: 60px;
-    }
-    .cover-title {
-        font-size: 36pt;
+    }}
+    .cover-banner {{
+        background: {brand_color};
+        color: #ffffff;
+        font-size: 13pt;
         font-weight: bold;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-    .cover-subtitle {
-        font-size: 14pt;
+        letter-spacing: 3px;
+        text-align: center;
+        padding: 18px 24px;
+        margin-bottom: 0;
+    }}
+    .cover-body {{
+        text-align: center;
+        padding: 40px 40px 30px 40px;
+    }}
+    .cover-logo {{
+        max-height: 70px;
+        max-width: 220px;
+        object-fit: contain;
+        margin-bottom: 24px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }}
+    .cover-title {{
+        font-size: 34pt;
+        font-weight: bold;
+        color: #1a1a2e;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+    }}
+    .cover-url {{
+        font-size: 10pt;
         color: #6b7280;
-        margin-bottom: 40px;
-    }
-    .cover-meta {
+        margin-bottom: 4px;
+    }}
+    .cover-description {{
+        font-size: 10pt;
+        color: #9ca3af;
+        margin-bottom: 28px;
+        font-style: italic;
+    }}
+    .cover-meta {{
         display: flex;
         justify-content: center;
         gap: 40px;
-        font-size: 10pt;
+        font-size: 9pt;
         color: #6b7280;
         border-top: 1px solid #e5e7eb;
         border-bottom: 1px solid #e5e7eb;
-        padding: 16px 0;
-        margin: 0 auto;
+        padding: 14px 0;
+        margin: 0 auto 28px auto;
         width: 80%;
-    }
-    .cover-meta strong { color: #111827; }
-    .score-dashboard {
+    }}
+    .cover-meta strong {{ color: #111827; }}
+    .score-box {{
+        background: {brand_color};
+        border-radius: 10px;
+        padding: 20px 30px 16px 30px;
+        margin: 0 auto 28px auto;
+        max-width: 280px;
+    }}
+    .score-box-label {{
+        font-size: 9pt;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }}
+    .score-value {{
+        font-size: 48pt;
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: 4px;
+    }}
+    .score-denom {{
+        font-size: 18pt;
+        font-weight: normal;
+        color: rgba(255,255,255,0.6);
+    }}
+    .score-tier {{
+        font-size: 8pt;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 8px;
+    }}
+    .score-dashboard {{
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
         margin: 20px 0;
         justify-content: center;
-    }
-    .score-card {
+    }}
+    .score-card {{
         background: #f9fafb;
         border: 1px solid #e5e7eb;
         border-radius: 8px;
-        padding: 12px 16px;
+        padding: 10px 14px;
         text-align: center;
-        min-width: 100px;
-    }
-    .score-card .val {
-        font-size: 22pt;
+        min-width: 95px;
+    }}
+    .score-card .val {{
+        font-size: 20pt;
         font-weight: bold;
-    }
-    .score-card .lbl {
-        font-size: 8pt;
+    }}
+    .score-card .lbl {{
+        font-size: 7pt;
         color: #6b7280;
         margin-top: 2px;
-    }
-    .critical-box {
+    }}
+    .critical-box {{
         background: #fff1f2;
         border-left: 4px solid #ef4444;
         border-radius: 4px;
         padding: 14px 18px;
         margin: 20px 0;
-    }
-    .critical-box h3 { color: #b91c1c; margin: 0 0 8px 0; font-size: 11pt; }
-    h1 { font-size: 20pt; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-top: 30px; }
-    h2 { font-size: 14pt; color: #1d4ed8; margin-top: 24px; }
-    h3 { font-size: 11pt; color: #374151; margin-top: 16px; }
-    h4 { font-size: 10pt; color: #6b7280; margin-top: 12px; }
-    table.audit-table {
+    }}
+    .critical-box h3 {{ color: #b91c1c; margin: 0 0 8px 0; font-size: 11pt; }}
+    h1 {{ font-size: 20pt; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-top: 30px; }}
+    h2 {{ font-size: 14pt; color: {brand_color}; margin-top: 24px; }}
+    h3 {{ font-size: 11pt; color: #374151; margin-top: 16px; }}
+    h4 {{ font-size: 10pt; color: #6b7280; margin-top: 12px; }}
+    table.audit-table {{
         width: 100%;
         border-collapse: collapse;
         margin: 12px 0;
         font-size: 9pt;
-    }
-    table.audit-table th {
-        background: #1d4ed8;
+    }}
+    table.audit-table th {{
+        background: {brand_color};
         color: white;
         padding: 7px 10px;
         text-align: left;
         font-weight: 600;
-    }
-    table.audit-table td {
+    }}
+    table.audit-table td {{
         padding: 6px 10px;
         border-bottom: 1px solid #f3f4f6;
-    }
-    table.audit-table tr:nth-child(even) td { background: #f9fafb; }
-    pre {
+    }}
+    table.audit-table tr:nth-child(even) td {{ background: #f9fafb; }}
+    pre {{
         background: #1e293b;
         color: #e2e8f0;
         padding: 12px 16px;
@@ -336,22 +441,22 @@ def _build_css() -> str:
         overflow-wrap: break-word;
         white-space: pre-wrap;
         margin: 12px 0;
-    }
-    code {
+    }}
+    code {{
         background: #f1f5f9;
         color: #0f172a;
         padding: 1px 4px;
         border-radius: 3px;
         font-size: 8.5pt;
-    }
-    pre code { background: none; color: inherit; padding: 0; }
-    ul { padding-left: 20px; }
-    li { margin-bottom: 4px; }
-    ul.checklist { list-style: none; padding-left: 0; }
-    ul.checklist li { padding: 4px 0; border-bottom: 1px solid #f3f4f6; }
-    hr { border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }
-    .page-break { page-break-before: always; }
-    .footer-note { font-size: 8pt; color: #9ca3af; text-align: center; margin-top: 40px; }
+    }}
+    pre code {{ background: none; color: inherit; padding: 0; }}
+    ul {{ padding-left: 20px; }}
+    li {{ margin-bottom: 4px; }}
+    ul.checklist {{ list-style: none; padding-left: 0; }}
+    ul.checklist li {{ padding: 4px 0; border-bottom: 1px solid #f3f4f6; }}
+    hr {{ border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }}
+    .page-break {{ page-break-before: always; }}
+    .footer-note {{ font-size: 8pt; color: #9ca3af; text-align: center; margin-top: 40px; }}
     """
 
 
@@ -362,15 +467,38 @@ def build_html(
     url: str,
     platform: str,
     audit_date: str,
+    brand_color: str = "#1d4ed8",
+    logo_b64: str = None,
+    store_name_override: str = None,
+    store_description: str = None,
 ) -> str:
     """Build full A4 HTML document from markdown content and scores."""
     overall = scores.get("overall", 0)
     categories = scores.get("categories", {})
-    gauge_svg = build_gauge_svg(overall)
-    chart_b64 = build_score_chart(categories) if categories else None
-    store_name = url.replace("https://", "").replace("http://", "").split("/")[0]
+    chart_b64 = build_score_chart(categories, brand_color) if categories else None
 
-    # Cover page
+    score_color = _score_color(overall)
+    score_bg = _score_bg(overall)
+    tier = _score_tier(overall)
+
+    # Derive store name: prefer explicit override, then extract from markdown, fallback to domain
+    if store_name_override:
+        store_name = store_name_override
+    else:
+        store_name = _extract_store_name(report_md, url)
+
+    # Logo HTML
+    logo_html = ""
+    if logo_b64:
+        mime = _detect_logo_mime(logo_b64)
+        logo_html = f'<img class="cover-logo" src="data:{mime};base64,{logo_b64}" alt="{store_name} logo">'
+
+    # Description line
+    description_html = ""
+    if store_description:
+        description_html = f'<div class="cover-description">{store_description}</div>'
+
+    # Score cards for category dashboard
     score_cards = ""
     for cat, val in categories.items():
         color = _score_color(val)
@@ -382,20 +510,24 @@ def build_html(
 
     cover = f"""
     <div class="cover">
-      <div class="cover-title">{store_name}</div>
-      <div class="cover-subtitle">ECOM Audit Report</div>
-      <div class="cover-meta">
-        <div><strong>Site</strong><br>{url}</div>
-        <div><strong>Platform</strong><br>{platform.title()}</div>
-        <div><strong>Date</strong><br>{audit_date}</div>
-        <div><strong>Audited By</strong><br>Claude ECOM Audit Suite</div>
+      <div class="cover-banner">ECOM HEALTH AUDIT REPORT</div>
+      <div class="cover-body">
+        {logo_html}
+        <div class="cover-title">{store_name}</div>
+        <div class="cover-url">{url}</div>
+        {description_html}
+        <div class="cover-meta">
+          <div><strong>Platform</strong><br>{platform.title()}</div>
+          <div><strong>Date</strong><br>{audit_date}</div>
+          <div><strong>Audited By</strong><br>Claude ECOM Audit Suite</div>
+        </div>
+        <div class="score-box">
+          <div class="score-box-label">ECOM Health Score</div>
+          <div class="score-value" style="color:#ffffff;">{overall}<span class="score-denom"> /100</span></div>
+          <div class="score-tier" style="background:rgba(255,255,255,0.15); color:#ffffff;">{tier}</div>
+        </div>
+        <div class="score-dashboard">{score_cards}</div>
       </div>
-      <br>
-      <div style="margin: 30px auto; width: 200px;">
-        {gauge_svg}
-      </div>
-      <div style="font-size:11pt; color:#6b7280; margin-bottom: 20px;">Overall ECOM Health Score</div>
-      <div class="score-dashboard">{score_cards}</div>
     </div>"""
 
     # Chart page
@@ -414,7 +546,7 @@ def build_html(
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<style>{_build_css()}</style>
+<style>{_build_css(brand_color)}</style>
 </head>
 <body>
 {cover}
@@ -455,6 +587,10 @@ def main():
     parser.add_argument("--url", required=True, help="Store URL")
     parser.add_argument("--platform", default="shopify", help="Platform name")
     parser.add_argument("--output", default="ecom-report.pdf", help="Output PDF path")
+    parser.add_argument("--brand-color", default="#1d4ed8", help="Brand primary color hex (e.g. #e63329)")
+    parser.add_argument("--store-name", default=None, help="Store display name (overrides auto-detection)")
+    parser.add_argument("--logo", default=None, help="Logo image: file path or URL")
+    parser.add_argument("--store-description", default=None, help="Short store description/tagline")
     args = parser.parse_args()
 
     report_md = Path(args.report).read_text(encoding="utf-8")
@@ -462,7 +598,20 @@ def main():
     scores = json.loads(args.scores)
     audit_date = date.today().strftime("%B %d, %Y")
 
-    html = build_html(report_md, action_plan_md, scores, args.url, args.platform, audit_date)
+    logo_b64 = _load_logo(args.logo) if args.logo else None
+
+    html = build_html(
+        report_md,
+        action_plan_md,
+        scores,
+        args.url,
+        args.platform,
+        audit_date,
+        brand_color=args.brand_color,
+        logo_b64=logo_b64,
+        store_name_override=args.store_name,
+        store_description=args.store_description,
+    )
     generate_pdf(html, args.output)
 
 

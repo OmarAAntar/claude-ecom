@@ -142,7 +142,32 @@ Organize ALL issues by priority tier, then by effort:
 
 ## PDF Generation
 
-After writing both markdown files, run:
+### Step 1 — Extract brand signals
+
+Run the brand extractor to pull the site's logo and primary color:
+```
+python scripts/extract_brand.py [url] --download-logo
+```
+
+Parse the JSON output. It returns:
+- `store_name` — brand name (use as `--store-name` if present)
+- `description` — tagline/description (use as `--store-description` if present)
+- `primary_color` — hex color e.g. `#e63329` (use as `--brand-color` if present)
+- `logo_url` — logo URL (for reference)
+- `logo_b64` — base64-encoded logo image (use as a temp file for `--logo`)
+
+If `logo_b64` is present, save it to a temp file first:
+```python
+import base64, tempfile, os
+logo_data = base64.b64decode(brand["logo_b64"])
+tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+tmp.write(logo_data); tmp.close()
+logo_path = tmp.name
+```
+
+### Step 2 — Generate PDF
+
+Build the command with all available brand signals:
 ```
 python scripts/ecom_report.py \
   --report ECOM-AUDIT-REPORT.md \
@@ -150,7 +175,13 @@ python scripts/ecom_report.py \
   --scores '{"overall": XX, "categories": {...}}' \
   --url [url] \
   --platform [platform] \
-  --output ecom-report.pdf
+  --output ecom-report.pdf \
+  --brand-color [primary_color or #1d4ed8] \
+  --store-name "[store_name]" \
+  --store-description "[description]" \
+  --logo [logo_path or logo_url]
 ```
+
+Omit any flag whose value is null/missing.
 
 Confirm PDF was generated and report its file path to the user.
