@@ -239,13 +239,18 @@ def fetch(url: str, ua: str = DESKTOP_UA, timeout: int = TIMEOUT) -> dict:
     }
     redirect_chain = []
     start = time.monotonic()
+    # `max_redirects` is a Session attribute, not a kwarg accepted by
+    # requests.get() — using a Session keeps the bound and lets the test
+    # suite stay hermetic. The Session is local so connections are
+    # cleaned up by GC.
+    session = requests.Session()
+    session.max_redirects = MAX_REDIRECTS
     try:
-        resp = requests.get(
+        resp = session.get(
             url,
             headers=headers,
             timeout=timeout,
             allow_redirects=True,
-            max_redirects=MAX_REDIRECTS,
         )
         elapsed_ms = int((time.monotonic() - start) * 1000)
         for r in resp.history:
