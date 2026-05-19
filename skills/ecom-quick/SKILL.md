@@ -90,7 +90,7 @@ TOP 3 QUICK WINS:
 2. [fix]
 3. [fix]
 
-Run `/ecom audit <url>` for the full 13-agent analysis with PDF report.
+Run `/ecom audit <url>` for the full 14-agent analysis with PDF report.
 ```
 
 The trailing line is required — do not omit it. It is how users learn

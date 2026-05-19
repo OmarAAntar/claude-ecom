@@ -9,62 +9,118 @@ category: ecommerce
 
 # Full E-Commerce Store Audit
 
-## Step 1 — Fetch & Detect
+## Step 1 — Fetch all inputs once at the orchestrator level
 
-Run `scripts/fetch_page.py <url>` (optionally `--market <m>`) to get:
-- Raw HTML (desktop UA)
-- Raw HTML (mobile UA: iPhone 14)
-- HTTP headers
-- Redirect chain
-- Page load time estimate
+The orchestrator does **all network fetches up front**, then passes
+the bytes to every agent. Agents do **not** re-fetch the store. This
+avoids hammering the target site (which can trigger rate limits or
+WAFs) and avoids the implicit serialization that 14 agents each
+making their own HTTP calls would create.
+
+Fetches to make once (in parallel with one another where independent):
+
+| What | UA / source | Used by |
+|---|---|---|
+| Homepage HTML (desktop) | `scripts/fetch_page.py <url>` | header, hero, copy, products discovery, seo |
+| Homepage HTML (mobile, iPhone 14) | `scripts/fetch_page.py <url> --mobile` | mobile agent |
+| Top 2–3 product page HTML (desktop) | `scripts/fetch_page.py` per URL | products, cro, offers, trust, upsells, seo, cart |
+| `/robots.txt` | direct GET | seo |
+| `/sitemap.xml` | direct GET | seo |
+| PageSpeed Insights JSON (mobile) | `scripts/pagespeed.py <url>` | performance |
+| Web search for competitors | `scripts/competitor_scan.py` | competitors |
+
+`scripts/fetch_page.py` also returns:
+- HTTP headers, redirect chain, page load time estimate
 - **`market`** — one of `lebanon`, `gcc`, `mena`, `eu`, `us`, `uk`,
-  `global`. The script auto-detects from the URL TLD (and HTML
-  `lang`) unless `--market` is passed explicitly.
-
-Detect platform from HTML (see ecom/SKILL.md routing table).
+  `global`. Auto-detected from the URL TLD (and HTML `lang`) unless
+  `--market` is passed explicitly.
+- The detected platform (Shopify / WooCommerce / BigCommerce /
+  Next.js / Squarespace / Wix / custom)
 
 Surface the detected market to the user at the start of the audit so
 they can override it if it's wrong. The full set of locale-conditional
 rules lives in `docs/market-expectations.md`. **Do not hardcode
 market rules in this file or in agent files.**
 
-Detect business type:
+Detect business type from the homepage HTML:
 - **Dropship** — generic descriptions, AliExpress image patterns, no brand story
 - **DTC Brand** — original branding, founder story, branded packaging mentions
 - **Marketplace** — multiple sellers, varying branding
 - **Service + Products** — hybrid (e.g., a salon selling products)
 
-## Step 2 — Spawn All Agents in Parallel
+## Step 2 — Spawn agents in batches that share inputs
 
-Use the Agent tool to spawn all 14 agents simultaneously. Pass each agent:
-- The fetched HTML
-- The detected platform
-- The store URL
-- The detected (or user-overridden) `market`
+Group agents by their input dependencies so each fetched payload is
+analyzed by every agent that needs it, instead of being re-fetched
+per agent. Spawn agents within a batch via the Agent tool in a single
+message (Claude Code dispatches Task calls in that message
+concurrently).
 
-For `ecom-seo`, also fetch and pass `/robots.txt`, `/sitemap.xml`, and
-the top 2–3 product page HTMLs before spawning.
+Each agent receives: the relevant HTML(s), the detected platform, the
+store URL, the resolved `market`, and any agent-specific inputs noted
+below.
+
+### Batch A — Homepage HTML consumers
+
+Inputs: desktop homepage HTML, platform, URL, market.
+
+| Agent | File | Analyzes |
+|---|---|---|
+| Header | `agents/ecom-header.md` | Logo, nav, announcement bar, cart icon, search |
+| Hero  | `agents/ecom-hero.md`   | Value prop, H1, hero CTA, above-fold content |
+| Copy  | `agents/ecom-copy.md`   | Headlines, value-prop framing, AI-content markers, superlatives |
+
+### Batch B — Product page HTML consumers
+
+Inputs: top 2–3 product page HTMLs (desktop), platform, URL, market.
+Trust also needs the homepage HTML (footer + policy links).
+
+| Agent | File | Analyzes |
+|---|---|---|
+| Products | `agents/ecom-products.md` | Descriptions, images, specs, variants, Product schema, alt text + variant a11y |
+| CRO      | `agents/ecom-cro.md`      | Product/cart/checkout CTAs, purchase barriers, CTA-level accessibility |
+| Offers   | `agents/ecom-offers.md`   | Pricing, anchoring, bundles, promotions, free-shipping threshold |
+| Trust    | `agents/ecom-trust.md`    | Reviews, badges, guarantees, policies, contact, market-specific signals |
+
+### Batch C — Independent inputs
+
+Each of these agents needs a payload nobody else uses, so they can
+all run alongside Batches A and B.
+
+| Agent | File | Inputs | Analyzes |
+|---|---|---|---|
+| Mobile      | `agents/ecom-mobile.md`      | Mobile homepage HTML + mobile product page HTML | 390px viewport, tap targets, mobile CRO, mobile a11y |
+| Performance | `agents/ecom-performance.md` | PageSpeed Insights JSON + homepage HTML | CWV (LCP/INP/CLS/FCP/TTFB), app bloat, render-blocking |
+| Competitors | `agents/ecom-competitors.md` | Web search results + competitor HTML | 3–5 direct competitors, comparison matrix, positioning gaps |
+| Retention   | `agents/ecom-retention.md`   | Homepage HTML (popup/footer markers) | Email capture, abandoned cart, post-purchase, WhatsApp/SMS |
+| Upsells     | `agents/ecom-upsells.md`     | Product page HTML + cart page HTML | Pre-ATC / in-cart / pre-checkout / post-purchase upsells |
+| Cart        | `agents/ecom-cart.md`        | Cart page HTML | Cart UX, checkout step count, guest checkout, payment icons |
+| SEO         | `agents/ecom-seo.md`         | Homepage HTML + product page HTML + robots.txt + sitemap.xml | Meta tags, schema, sitemap/robots, AI crawler access, link depth, canonicals, alt SEO. **Separate Discoverability Score — not folded into ECOM Health.** |
+
+### A note on actual parallelism
+
+Claude Code's Task tool spawns sub-agents concurrently within a
+single message, but each spawned sub-agent itself runs sequentially
+through its own steps, and the underlying model API rate-limits the
+total number of in-flight Task calls. Empirically that ceiling is
+typically around 3–4 effective parallel agents, not 14. The batching
+above is structured so that the **slowest dependency for each batch
+overlaps with the slowest dependency for the others**:
+
+- Batch A reads the homepage that's already in memory.
+- Batch B reads product page HTML that the orchestrator fetched in
+  parallel with the homepage.
+- Batch C's heaviest legs (PageSpeed Insights, competitor web
+  search) are wall-clock-bound on external APIs, so dispatching them
+  alongside A and B is free.
+
+Net effect: the audit's wall time is roughly
+`max(homepage fetch, product fetches, PSI call, competitor search)
+ + the slowest agent in the slowest batch`, not 14 × per-agent time.
 
 Agents apply market-conditional rules from
 `docs/market-expectations.md`. If `market = global`, agents skip
 locale-conditional checks entirely.
-
-| Agent | File | Analyzes |
-|---|---|---|
-| Header | `agents/ecom-header.md` | Logo, nav, announcement bar, cart, search |
-| Hero | `agents/ecom-hero.md` | Value prop, H1, CTA, above-fold content |
-| Products | `agents/ecom-products.md` | Descriptions, images, specs, variants |
-| Cart | `agents/ecom-cart.md` | Cart page UX, upsells, friction |
-| CRO | `agents/ecom-cro.md` | Checkout flow, form friction, CTAs, CTA-level accessibility |
-| Offers | `agents/ecom-offers.md` | Pricing, bundles, promotions, anchoring |
-| Upsells | `agents/ecom-upsells.md` | Post-purchase, cross-sells, BOGO |
-| Trust | `agents/ecom-trust.md` | Reviews, badges, guarantees, policies |
-| Mobile | `agents/ecom-mobile.md` | 390px viewport, tap targets, mobile CRO, mobile accessibility (target size, zoom, form labels) |
-| Performance | `agents/ecom-performance.md` | CWV, LCP, INP, CLS, app bloat |
-| Copy | `agents/ecom-copy.md` | Headlines, descriptions, CTAs, tone |
-| Competitors | `agents/ecom-competitors.md` | 3 competitors, price/offer/trust gaps |
-| Retention | `agents/ecom-retention.md` | Popups, email capture, post-purchase flows |
-| SEO | `agents/ecom-seo.md` | Meta tags, product/Organization schema, sitemap/robots, AI crawlers, link depth, canonicals, alt SEO. **Separate Discoverability Score — does not factor into ECOM Health Score.** |
 
 ### Accessibility coverage
 

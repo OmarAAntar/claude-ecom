@@ -79,16 +79,26 @@ cd claude-ecom
 ## Architecture
 
 ```
-13 parallel agents → score aggregation → markdown reports → PDF
+orchestrator → batched specialist agents → score aggregation → markdown + PDF
 ```
+
+The full audit dispatches **14 specialist agents** organized into
+three batches that share input HTML, so the target store is fetched
+only **once per page per user agent** rather than 14 times. In
+practice Claude Code's Task tool runs ~3–4 sub-agents truly
+concurrently (rate-limited by the model API), so the audit is
+effectively pipelined rather than fully parallel — but the batching
+keeps wall time bounded by the slowest batch plus the slowest fetch,
+not by the sum of all agents. See
+`skills/ecom-audit/SKILL.md` for the batch layout.
 
 | Layer | Files | Role |
 |---|---|---|
 | Orchestrator | `skills/ecom/SKILL.md` | Routes commands |
-| Full audit | `skills/ecom-audit/SKILL.md` | Spawns all agents |
-| Sub-skills | `skills/ecom-*/SKILL.md` | Domain-specific logic |
-| Agents | `agents/ecom-*.md` | Parallel analysis |
-| Scripts | `scripts/*.py` | Fetch, PSI API, PDF |
+| Full audit | `skills/ecom-audit/SKILL.md` | Fetches once, spawns agents in batches |
+| Sub-skills | `skills/ecom-*/SKILL.md` | Domain-specific entry points (`/ecom cro`, etc.) |
+| Agents | `agents/ecom-*.md` | Specialist analyzers, run concurrently within each batch |
+| Scripts | `scripts/*.py` | Fetch, market detect, PSI, schema validation, PDF |
 
 ## Scoring Weights
 
