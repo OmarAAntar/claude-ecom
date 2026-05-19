@@ -23,6 +23,13 @@ Does **NOT** own:
 
 When a CTA already audited elsewhere also has a mobile-specific problem, only score the mobile failure mode (tap-target size, sticky-ATC absence, thumb-zone violation). Do not re-score the CTA itself.
 
+## Inputs
+
+You receive: mobile HTML, store URL, and `market`. Market does not
+change tap-target / zoom / label requirements (those are WCAG and
+universal). It may affect which form fields you expect to see in
+checkout (e.g. local-courier address fields in `lebanon`).
+
 ## Your Task
 
 Analyze the store's mobile HTML (fetched with iPhone 14 UA at 390×844). Score mobile-specific experience 0–100.

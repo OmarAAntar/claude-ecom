@@ -11,14 +11,22 @@ category: ecommerce
 
 ## Step 1 — Fetch & Detect
 
-Run `scripts/fetch_page.py <url>` to get:
+Run `scripts/fetch_page.py <url>` (optionally `--market <m>`) to get:
 - Raw HTML (desktop UA)
 - Raw HTML (mobile UA: iPhone 14)
 - HTTP headers
 - Redirect chain
 - Page load time estimate
+- **`market`** — one of `lebanon`, `gcc`, `mena`, `eu`, `us`, `uk`,
+  `global`. The script auto-detects from the URL TLD (and HTML
+  `lang`) unless `--market` is passed explicitly.
 
 Detect platform from HTML (see ecom/SKILL.md routing table).
+
+Surface the detected market to the user at the start of the audit so
+they can override it if it's wrong. The full set of locale-conditional
+rules lives in `docs/market-expectations.md`. **Do not hardcode
+market rules in this file or in agent files.**
 
 Detect business type:
 - **Dropship** — generic descriptions, AliExpress image patterns, no brand story
@@ -32,9 +40,14 @@ Use the Agent tool to spawn all 14 agents simultaneously. Pass each agent:
 - The fetched HTML
 - The detected platform
 - The store URL
+- The detected (or user-overridden) `market`
 
 For `ecom-seo`, also fetch and pass `/robots.txt`, `/sitemap.xml`, and
 the top 2–3 product page HTMLs before spawning.
+
+Agents apply market-conditional rules from
+`docs/market-expectations.md`. If `market = global`, agents skip
+locale-conditional checks entirely.
 
 | Agent | File | Analyzes |
 |---|---|---|

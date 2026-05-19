@@ -13,6 +13,14 @@ This score does **not** factor into the overall ECOM Health Score. It
 is reported as a separate **Discoverability Score** so SEO debt does
 not mask conversion-readiness, and vice versa.
 
+## Inputs
+
+You receive: homepage HTML, product page HTML, `robots.txt` content,
+`sitemap.xml` content, platform, store URL, and `market`. Market
+mostly affects language / hreflang expectations and which country's
+search SERPs to prioritize; the structured-data and crawler-access
+checks themselves are universal. See `docs/market-expectations.md`.
+
 ## Your Task
 
 Analyze meta tags, structured data, sitemap/robots configuration, AI

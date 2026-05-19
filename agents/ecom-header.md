@@ -18,6 +18,13 @@ Does **NOT** own:
 
 When you find a header issue that's purely a mobile failure mode, note it but do not deduct — defer to ecom-mobile.
 
+## Inputs
+
+You receive: HTML, store URL, and `market`. Market affects which
+header trust strip you expect (e.g. WhatsApp number for `lebanon` /
+`gcc` / `mena`, "Free returns" for `us` / `uk`). Logo / nav / cart /
+search checks are market-agnostic. See `docs/market-expectations.md`.
+
 ## Your Task
 
 Analyze the header section of the provided HTML and score it 0–100.

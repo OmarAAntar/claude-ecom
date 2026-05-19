@@ -17,6 +17,13 @@ Does **NOT** own:
 
 When you find a hero issue that's purely a mobile failure mode, note it but do not deduct — defer to ecom-mobile.
 
+## Inputs
+
+You receive: HTML, store URL, and `market`. Market mostly affects
+which trust signals you expect in the hero (e.g. COD for `lebanon`,
+VAT framing for `eu`/`uk`). H1 / CTA / image checks are
+market-agnostic. See `docs/market-expectations.md`.
+
 ## Your Task
 
 Analyze the hero / above-the-fold section of the provided HTML and score it 0–100.

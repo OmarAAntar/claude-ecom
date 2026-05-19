@@ -30,7 +30,7 @@ When a CTA already audited elsewhere also has a mobile-specific problem (e.g., a
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML with the iPhone 14 UA: `Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-mobile.md` with the mobile HTML and URL
+4. Spawn `agents/ecom-mobile.md` with the mobile HTML, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; rules in `docs/market-expectations.md`)
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

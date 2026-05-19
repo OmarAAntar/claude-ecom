@@ -20,7 +20,7 @@ Run when the user asks about copy quality, headlines, product descriptions, valu
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-copy.md` with the fetched HTML and URL
+4. Spawn `agents/ecom-copy.md` with the fetched HTML, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; rules in `docs/market-expectations.md`)
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

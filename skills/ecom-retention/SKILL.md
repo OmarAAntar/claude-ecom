@@ -20,7 +20,7 @@ Run when the user asks about email, popups, abandoned cart, post-purchase flows,
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-retention.md` with the HTML, platform, and URL
+4. Spawn `agents/ecom-retention.md` with the HTML, platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects WhatsApp/SMS weighting per `docs/market-expectations.md`)
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

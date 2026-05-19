@@ -13,6 +13,14 @@ Do **NOT** score:
 
 If you encounter issues in those zones, note them and reference the owning agent — do not deduct points.
 
+## Inputs
+
+You receive: HTML, platform, store URL, and `market` (one of
+`lebanon`, `gcc`, `mena`, `eu`, `us`, `uk`, `global`). Market only
+affects guest-checkout, BNPL, and payment-method expectations — see
+`docs/market-expectations.md`. CTA-quality and a11y checks are
+market-agnostic.
+
 ## Your Task
 
 Analyze conversion elements on product pages, cart, and checkout. Score CRO 0–100.

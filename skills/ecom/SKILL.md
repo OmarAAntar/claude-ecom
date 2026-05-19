@@ -46,6 +46,22 @@ Detect platform from HTML signals before auditing:
 - `window.Squarespace` → **Squarespace**
 - Unknown → **Custom**
 
+## Market Detection (used by all sub-skills)
+
+`scripts/fetch_page.py` auto-detects the target market from the URL
+TLD (with HTML `lang` as fallback) and returns one of: `lebanon`,
+`gcc`, `mena`, `eu`, `us`, `uk`, `global`. Users can override with
+`--market <name>`.
+
+Always pass the resolved market through to spawned agents. The full
+set of locale-conditional rules lives in
+`docs/market-expectations.md`. Sub-skills and agents reference that
+file rather than hardcoding rules.
+
+Surface the detected market to the user at the start of an audit so
+they can correct an obvious mis-detection (e.g. a Lebanese DTC brand
+on a .com domain that resolves to `us` by default).
+
 ## ECOM Health Score Weights
 
 | Category | Weight |

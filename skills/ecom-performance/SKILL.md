@@ -21,7 +21,7 @@ Run when the user asks about page speed, Core Web Vitals, LCP/INP/CLS, app bloat
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Run `scripts/pagespeed.py <url>` to get live CrUX + Lighthouse data
 4. Detect platform (see `skills/ecom/SKILL.md` routing table)
-5. Spawn `agents/ecom-performance.md` with the HTML, PageSpeed JSON, platform, and URL
+5. Spawn `agents/ecom-performance.md` with the HTML, PageSpeed JSON, platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects the geographic-TTFB note per `docs/market-expectations.md`)
 6. Format the agent's JSON output using the user-facing template below
 
 ## Data Sources

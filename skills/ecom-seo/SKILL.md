@@ -33,7 +33,9 @@ mixing them masks both.
 5. Fetch those product pages
 6. Detect platform (see `skills/ecom/SKILL.md` routing table)
 7. Spawn `agents/ecom-seo.md` with: homepage HTML, product page HTML,
-   robots.txt content, sitemap.xml content, platform, and URL
+   robots.txt content, sitemap.xml content, platform, URL, and the
+   detected `market` (auto-detected by `scripts/fetch_page.py`; affects
+   hreflang and search-SERP scoping per `docs/market-expectations.md`)
 8. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

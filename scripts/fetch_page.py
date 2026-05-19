@@ -8,6 +8,8 @@ Usage:
 Output: JSON with html, headers, status_code, redirect_chain, load_time_ms
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -33,6 +35,86 @@ GOOGLEBOT_UA = "Googlebot/2.1 (+http://www.google.com/bot.html)"
 TIMEOUT = 15
 MAX_REDIRECTS = 5
 ALLOWED_SCHEMES = {"http", "https"}
+
+VALID_MARKETS = {"lebanon", "mena", "gcc", "eu", "us", "uk", "global"}
+
+# Country-code TLD → market mapping. Source of truth for auto-detection.
+# Keep aligned with docs/market-expectations.md.
+TLD_TO_MARKET = {
+    "lb": "lebanon",
+    # GCC
+    "ae": "gcc", "sa": "gcc", "kw": "gcc",
+    "qa": "gcc", "bh": "gcc", "om": "gcc",
+    # MENA (non-GCC)
+    "eg": "mena", "jo": "mena", "ma": "mena",
+    "tn": "mena", "dz": "mena",
+    # UK
+    "uk": "uk", "co.uk": "uk",
+    # EU
+    "de": "eu", "fr": "eu", "es": "eu", "it": "eu",
+    "nl": "eu", "be": "eu",
+}
+
+
+def detect_market_from_tld(hostname: str) -> str | None:
+    """Return a market for a recognized ccTLD, or None.
+
+    Checks the two-segment suffix first (e.g. co.uk) before falling back to
+    the final segment, so amazon.co.uk maps to uk rather than getting lost.
+    """
+    if not hostname:
+        return None
+    host = hostname.lower().rstrip(".")
+    parts = host.split(".")
+    if len(parts) >= 2:
+        two = ".".join(parts[-2:])
+        if two in TLD_TO_MARKET:
+            return TLD_TO_MARKET[two]
+    if parts:
+        one = parts[-1]
+        if one in TLD_TO_MARKET:
+            return TLD_TO_MARKET[one]
+    return None
+
+
+def detect_market(url: str, html: str | None = None) -> str:
+    """Auto-detect market from URL TLD, with HTML language as fallback.
+
+    Returns one of VALID_MARKETS. Defaults to 'us' for .com / generic TLDs
+    that render in English; falls back to 'global' if signals are absent.
+    """
+    parsed = urlparse(url if "://" in url else f"https://{url}")
+    market = detect_market_from_tld(parsed.hostname or "")
+    if market:
+        return market
+
+    # Fallback: scan HTML for explicit language hints
+    if html:
+        lowered = html.lower()
+        # Arabic content suggests MENA/GCC — leave it to the caller to refine
+        if 'lang="ar"' in lowered or 'dir="rtl"' in lowered:
+            return "mena"
+        # Default English on .com → us
+        if 'lang="en"' in lowered:
+            return "us"
+
+    # Final fallback: .com defaults to us; anything else → global
+    host = (parsed.hostname or "").lower()
+    if host.endswith(".com"):
+        return "us"
+    return "global"
+
+
+def normalize_market(value: str | None, url: str, html: str | None = None) -> str:
+    """Validate an explicit market value, or auto-detect if not provided."""
+    if value:
+        value = value.lower().strip()
+        if value not in VALID_MARKETS:
+            raise ValueError(
+                f"Invalid market {value!r}. Choose from: {sorted(VALID_MARKETS)}"
+            )
+        return value
+    return detect_market(url, html)
 
 
 def validate_url(url: str) -> str:
@@ -137,24 +219,40 @@ def main():
     parser.add_argument("--googlebot", action="store_true", help="Use Googlebot UA")
     parser.add_argument("--both", action="store_true", help="Fetch with desktop + mobile + googlebot")
     parser.add_argument("--platform", action="store_true", help="Detect platform only")
+    parser.add_argument(
+        "--market",
+        default=None,
+        choices=sorted(VALID_MARKETS),
+        help="Target market for locale-aware checks. Auto-detects from TLD/language if omitted.",
+    )
     args = parser.parse_args()
 
     try:
         if args.both:
             result = fetch_both(args.url)
             result["platform"] = detect_platform(result["desktop"]["html"])
+            result["market"] = normalize_market(
+                args.market, args.url, result["desktop"]["html"]
+            )
         elif args.mobile:
             result = fetch(args.url, ua=MOBILE_UA)
             result["platform"] = detect_platform(result["html"])
+            result["market"] = normalize_market(args.market, args.url, result["html"])
         elif args.googlebot:
             result = fetch(args.url, ua=GOOGLEBOT_UA)
             result["platform"] = detect_platform(result["html"])
+            result["market"] = normalize_market(args.market, args.url, result["html"])
         elif args.platform:
-            result = fetch(args.url, ua=DESKTOP_UA)
-            result = {"platform": detect_platform(result["html"]), "url": args.url}
+            fetched = fetch(args.url, ua=DESKTOP_UA)
+            result = {
+                "platform": detect_platform(fetched["html"]),
+                "market": normalize_market(args.market, args.url, fetched["html"]),
+                "url": args.url,
+            }
         else:
             result = fetch(args.url, ua=DESKTOP_UA)
             result["platform"] = detect_platform(result["html"])
+            result["market"] = normalize_market(args.market, args.url, result["html"])
 
         print(json.dumps(result, ensure_ascii=False))
     except ValueError as e:
