@@ -127,6 +127,10 @@ Return JSON:
   "price_position": "",
   "positioning_recommendation": "",
   "quick_wins": [],
+  "critical": [],
+  "high": [],
+  "medium": [],
+  "low": [],
   "notes": ""
 }
 ```

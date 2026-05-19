@@ -129,6 +129,9 @@ Return JSON:
   "rewrites": [],
   "critical": [],
   "high": [],
+  "medium": [],
+  "low": [],
+  "quick_wins": [],
   "notes": ""
 }
 ```

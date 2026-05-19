@@ -81,6 +81,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "out_of_scope_observations": [],
   "notes": ""

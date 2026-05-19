@@ -100,6 +100,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "code_fixes": [],
   "notes": ""

@@ -142,6 +142,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "css_fixes": [],
   "out_of_scope_observations": [],

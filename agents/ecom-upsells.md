@@ -77,6 +77,8 @@ Return JSON:
   "high": [],
   "quick_wins": [],
   "cross_sell_suggestions": {},
+  "medium": [],
+  "low": [],
   "notes": ""
 }
 ```

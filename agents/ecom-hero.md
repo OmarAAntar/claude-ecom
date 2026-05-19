@@ -85,6 +85,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "suggested_h1": "",
   "suggested_cta": "",

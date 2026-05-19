@@ -118,6 +118,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "bundle_suggestions": [],
   "notes": ""

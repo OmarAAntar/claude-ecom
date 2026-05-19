@@ -128,6 +128,7 @@ Return JSON:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "schema_fixes": {},
   "notes": ""

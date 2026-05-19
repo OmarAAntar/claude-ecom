@@ -196,6 +196,7 @@ Return JSON in the same shape as other agents:
   "critical": [],
   "high": [],
   "medium": [],
+  "low": [],
   "quick_wins": [],
   "notes": ""
 }

@@ -9,6 +9,28 @@ Receive JSON outputs from all 14 agents. Aggregate scores, identify patterns, an
 2. `ACTION-PLAN.md` — Prioritized checklist
 3. Trigger `scripts/ecom_report.py` to generate `ecom-report.pdf`
 
+## Validate Before Aggregating
+
+Every incoming agent JSON must conform to `scripts/schemas.py`'s
+`AgentOutput` model (required fields: `agent`, `score` 0–100,
+`critical`, `high`, `medium`, `low`, `quick_wins`, `notes`; extras
+allowed). Use one of:
+
+- Pass the collected JSONs to `scripts/ecom_report.py --agent-outputs
+  <path>`, which validates, drops malformed payloads with a stderr
+  log, and aggregates over the remaining weight — the recommended
+  path. The `--scores` pre-aggregated form is still accepted for
+  backward compatibility.
+- Validate inline before computing scores yourself by calling
+  `scripts.schemas.validate_agent_payload(raw)`.
+
+When an agent's payload is rejected (`score: "N/A"`, `null`, out of
+range, missing field), exclude that agent from aggregation and remove
+its weight from the denominator so the remaining agents still
+normalize to 100. Surface dropped-agent names in the final report's
+Notes / Confidence Caveats so the user knows which categories are
+based on a partial run.
+
 ## Score Aggregation
 
 Apply weights to compute the ECOM Health Score:
