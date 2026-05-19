@@ -44,14 +44,14 @@ Performance:         38/100
 
 ### macOS / Linux
 ```bash
-git clone https://github.com/your-handle/claude-ecom
+git clone https://github.com/OmarAAntar/claude-ecom.git
 cd claude-ecom
 bash install.sh
 ```
 
 ### Windows
 ```powershell
-git clone https://github.com/your-handle/claude-ecom
+git clone https://github.com/OmarAAntar/claude-ecom.git
 cd claude-ecom
 .\install.ps1
 ```
