@@ -9,70 +9,34 @@ category: ecommerce
 
 # CRO Audit
 
-## Scoring Weights (100 pts total)
+User-invokable: `/ecom cro <url>`
 
-| Check | Points |
-|---|---|
-| Primary CTA visible above fold (desktop + mobile) | 10 |
-| CTA button contrast ratio ≥ 4.5:1 | 5 |
-| Add-to-Cart button size ≥ 44px height | 5 |
-| Guest checkout option available | 8 |
-| Checkout step count ≤ 3 | 8 |
-| Form field count at checkout ≤ 8 | 7 |
-| Autofill supported (name, address, card) | 5 |
-| Progress bar/indicator in checkout | 5 |
-| Trust badges visible at checkout | 7 |
-| Payment method icons shown | 5 |
-| Exit-intent popup present | 5 |
-| Sticky ATC bar on product pages (mobile) | 6 |
-| Error messages are descriptive (not just red outline) | 4 |
-| Cart summary visible during checkout | 5 |
-| Free shipping threshold shown in cart | 5 |
-| "You save X" shown on discounted items | 5 |
+## When to Use
 
-## What to Check Per Page
+Run when the user asks about conversion, checkout issues, CTAs, why visitors aren't converting, or wants a CRO deep dive without a full audit.
 
-### Homepage / Landing Page
-- Is the primary CTA the most visually dominant element?
-- Does the hero answer: What is it? Who is it for? Why buy here?
-- Are there competing CTAs confusing the visitor?
-- Is the value proposition visible without scrolling?
+## Scope
 
-### Product Page
-- Is "Add to Cart" visible without scrolling on mobile?
-- Is the price visible without scrolling?
-- Is there a sticky ATC bar that appears on scroll?
-- Are variant selectors (size, color) intuitive — swatches vs dropdowns?
-- Is stock level shown? ("Only 3 left" adds urgency)
-- Is shipping estimate on the product page?
-- Is the return policy a single visible sentence on the page?
+Product page + cart + checkout CTAs and purchase barriers.
 
-### Cart Page
-- Is editing quantity easy (not buried)?
-- Is the checkout button above the fold?
-- Is there a "continue shopping" link (not just browser back)?
-- Does the cart show product images?
-- Is the free-shipping-upsell message shown? ("Add $X for free shipping")
+Does **NOT** cover:
+- Hero/above-the-fold CTA (handled by `agents/ecom-hero.md`)
+- Nav and announcement-bar CTAs (handled by `agents/ecom-header.md`)
+- Mobile-specific CTA failure modes — tap target size, sticky ATC presence (handled by `agents/ecom-mobile.md`)
 
-### Checkout
-- How many steps? (1-page vs multi-step)
-- Is guest checkout offered?
-- Is the form autofill-friendly?
-- Are error messages specific and helpful?
-- Is the order summary always visible?
-- Is the CTA button text action-oriented? ("Place Order" vs "Continue")
-- Are security badges visible near the submit button?
+## Orchestration
 
-## Revenue Impact Framing
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch desktop + mobile HTML via `scripts/fetch_page.py`
+3. Detect platform (see `skills/ecom/SKILL.md` routing table)
+4. Spawn `agents/ecom-cro.md` with the fetched HTML, detected platform, and URL
+5. Format the agent's JSON output using the user-facing template below
 
-For each issue found, attach a conversion impact estimate:
-- Missing sticky ATC (mobile): ~3–6% conversion loss
-- No guest checkout: ~35% of visitors abandon at account creation
-- Checkout > 3 steps: ~20% drop-off per extra step
-- Poor CTA contrast: ~1–3% conversion loss
-- No free shipping indicator: ~5–8% cart abandonment increase
+## Scoring Rubric & Check Criteria
 
-## Output Format
+See `agents/ecom-cro.md` for the scoring rubric and check criteria.
+
+## User-Facing Output Format
 
 ```
 CRO SCORE: XX/100

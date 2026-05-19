@@ -10,13 +10,14 @@ Find 3–5 direct competitors using web search. Fetch their homepages and flagsh
 
 Based on the audited store's products and market, run these searches:
 1. `[product category] [country] buy online`
-2. `[product category] [country] cash on delivery` (if COD detected)
+2. `[product category] [country] cash on delivery` (if COD market detected)
 3. `[product name] alternatives [country]`
+4. `best [product category] store [country]`
 
 Pick the top 3–5 results that are:
 - Selling the same or similar products
 - In the same geographic market
-- Not marketplaces (Amazon, Noon) — direct stores only
+- Direct stores only — NOT marketplaces (Amazon, Noon, AliExpress)
 
 ## Step 2 — Fetch Competitor Data
 
@@ -27,12 +28,16 @@ For each competitor, run `scripts/fetch_page.py <competitor_url>` and extract:
 | Price of comparable product | Product page |
 | Hero offer | Homepage H1/H2 + banner |
 | Shipping offer | Banner + product page |
-| Return policy | Footer or policies page |
+| Return policy days | Footer / policies page |
 | Review count (flagship product) | Product page |
-| Payment methods | Footer icons |
-| WhatsApp/Chat | Bottom corner |
-| Catalog size (approx) | Collection page |
-| Trustpilot/Google badge | Footer or header |
+| Review platform | Trustpilot badge / Judge.me / etc. |
+| Payment methods | Footer icons / checkout |
+| WhatsApp / live chat | Bottom corner |
+| Catalog size (approx) | Collections page |
+| Trustpilot / Google badge | Footer or header |
+| Hero offer | Homepage above fold |
+| Blog / content present | Nav / footer |
+| Social proof (followers) | Social links in footer |
 
 ## Step 3 — Competitor Comparison Matrix
 
@@ -40,22 +45,44 @@ Build a table: [data point] × [each competitor + audited store].
 
 ## Step 4 — Gap Analysis
 
-### Critical Gaps (things ALL competitors do that audited store doesn't)
-These are table stakes — not having them is actively losing sales.
+### Critical Gaps
+Things ALL competitors do that the audited store doesn't. These are table stakes — not having them is actively losing sales.
 
-### Opportunity Gaps (things NO competitor does well)
-These are differentiators — doing them better than everyone is a growth lever.
+### Opportunity Gaps
+Things NO competitor does well. These are differentiators — doing them better than everyone is a growth lever.
 
 ### Price Gap
-- Is the audited store priced above/below market?
-- Is the price difference justified by the quality signals?
+- Is the audited store priced above/below/at market?
+- Is the price difference justified by quality signals?
+- What is the cheapest competitor's price for the same product?
+
+### Offer Gap
+- What promotions are competitors running that this store isn't?
+- BOGO, bundles, free gift with purchase, loyalty points?
+- More aggressive free-shipping threshold?
+
+### Trust Gap
+- Review count differential
+- Trustpilot / Google reviews widget present on competitors?
+- "As Seen In" press bar?
+
+### Content Gap
+- Blog presence and post count
+- YouTube channel?
+- Product images / videos depth?
+
+### UX Gap
+- Faster checkout?
+- Better mobile experience?
+- Live chat / WhatsApp visible?
 
 ## Step 5 — Positioning Recommendation
 
-Based on the gap analysis, write a 2-sentence positioning statement:
-"SmartHaul should position as [X] because competitors are weak on [Y]. The key differentiator to lead with is [Z]."
+Write a 2-sentence positioning statement based on the gap analysis:
+"[Store] should position as [X] because competitors are weak on [Y]. The key differentiator to lead with is [Z]."
 
 ## Scoring (100 pts)
+
 Score how well-positioned the audited store is vs. competitors:
 - Price competitiveness: 20
 - Offer strength vs. competitors: 20

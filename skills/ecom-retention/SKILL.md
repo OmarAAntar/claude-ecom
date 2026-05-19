@@ -9,68 +9,25 @@ category: ecommerce
 
 # Retention & Email Audit
 
-## Scoring Weights (100 pts)
+User-invokable: `/ecom retention <url>`
 
-| Check | Points |
-|---|---|
-| Email capture popup present | 10 |
-| Popup fires at exit intent or 5+ seconds (not immediately) | 6 |
-| Popup offers genuine value (% off, free guide, early access) | 8 |
-| Popup closeable (visible X button ≥ 44px) | 5 |
-| Footer newsletter signup present | 5 |
-| Abandoned cart email configured | 12 |
-| Post-purchase email sequence exists | 10 |
-| Review request email (triggered 7–14 days post-delivery) | 8 |
-| Win-back email for lapsed customers | 6 |
-| SMS capture present (optional but strong in MENA) | 4 |
-| Loyalty / points program present | 5 |
-| Referral program present | 5 |
-| WhatsApp broadcast list or chat widget | 6 |
-| Social follow prompt on thank-you page | 3 |
-| Subscription option for consumables | 2 |
+## When to Use
 
-## Popup Audit
+Run when the user asks about email, popups, abandoned cart, post-purchase flows, loyalty, referral, or Klaviyo/Omnisend setup.
 
-Good popup:
-- Fires on exit intent OR after 5+ seconds (not on load)
-- Offers a specific value ("Get 10% off your first order")
-- Has a clear email input field
-- Has a visible, easy-to-click close button
-- Does NOT appear on every page on mobile (Google penalty risk)
+## Orchestration
 
-Bad popup:
-- Fires immediately on page load (highest bounce rate trigger)
-- Just says "Subscribe to our newsletter" (no value prop)
-- Covers the entire screen on mobile with no easy close
-- Re-appears on every visit
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch HTML via `scripts/fetch_page.py`
+3. Detect platform (see `skills/ecom/SKILL.md` routing table)
+4. Spawn `agents/ecom-retention.md` with the HTML, platform, and URL
+5. Format the agent's JSON output using the user-facing template below
 
-## Email Flow Priority
+## Scoring Rubric & Check Criteria
 
-| Flow | Revenue impact | Setup time |
-|---|---|---|
-| Abandoned cart (1hr / 24hr / 72hr) | Highest | 30 min |
-| Post-purchase welcome + upsell | High | 1 hour |
-| Review request (Day 7–14 post-ship) | High | 20 min |
-| Browse abandonment | Medium | 1 hour |
-| Win-back (90-day lapse) | Medium | 30 min |
-| Loyalty milestone | Low | 2 hours |
+See `agents/ecom-retention.md` for the scoring rubric and check criteria.
 
-## Platform-Specific Notes
-
-### Shopify
-- Native: Shopify Email (free, basic)
-- Recommended: Klaviyo (free up to 250 contacts), Omnisend
-- Abandoned cart: Shopify → Settings → Notifications → Abandoned checkout
-
-### WooCommerce
-- Recommended: Klaviyo, Mailchimp, FluentCRM
-
-### Lebanon / MENA
-- WhatsApp broadcasts are more effective than email
-- Consider WhatsApp Business API for post-purchase flows
-- SMS via local provider (e.g., MessageBird, Twilio with LB numbers)
-
-## Output Format
+## User-Facing Output Format
 
 ```
 RETENTION SCORE: XX/100

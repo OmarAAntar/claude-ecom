@@ -9,74 +9,25 @@ category: ecommerce
 
 # Trust & Social Proof Audit
 
-## Scoring Weights (100 pts)
+User-invokable: `/ecom trust <url>`
 
-| Check | Points |
-|---|---|
-| Reviews present on product pages | 12 |
-| Review count ≥ 10 per flagship product | 8 |
-| Review photos / UGC present | 6 |
-| Star rating visible on collection page | 5 |
-| Third-party review platform (Trustpilot/Google) | 6 |
-| Money-back guarantee visible | 8 |
-| Return policy clearly stated (days + process) | 7 |
-| Contact method above fold (WhatsApp/email/chat) | 8 |
-| Phone number or physical address visible | 5 |
-| Founder / About Us page exists | 6 |
-| SSL badge / secure checkout icon visible | 4 |
-| Payment method icons in footer | 4 |
-| "As Seen In" press bar | 4 |
-| Customer count / orders served social proof | 4 |
-| Trust badge on product page (near ATC button) | 5 |
-| Policy pages crawlable (not JS-only) | 4 |
-| No unsubstantiated superlatives (#1 in Lebanon) | 4 |
+## When to Use
 
-## Market-Specific Trust Signals
+Run when the user asks about reviews, trust signals, refund/return policy, contact visibility, badges, or founder story.
 
-### Lebanon / MENA
-- Cash on Delivery: CRITICAL — must be prominent
-- WhatsApp contact: CRITICAL — primary customer service channel
-- Lebanese phone number: HIGH
-- Delivery to all governorates stated: HIGH
-- USD pricing with LBP note: MEDIUM
+## Orchestration
 
-### US / EU
-- Trustpilot or Google reviews widget: HIGH
-- BNPL option (Klarna/Afterpay/Shop Pay): MEDIUM
-- "Free returns" prominently stated: HIGH
-- SSL padlock visible in nav: MEDIUM
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch HTML via `scripts/fetch_page.py`
+3. Detect platform (see `skills/ecom/SKILL.md` routing table)
+4. Spawn `agents/ecom-trust.md` with the HTML and URL
+5. Format the agent's JSON output using the user-facing template below
 
-### General
-- Founder photo humanizes brand: HIGH
-- "X orders delivered" counter: MEDIUM
-- Instagram/TikTok feed showing real customers: HIGH
+## Scoring Rubric & Check Criteria
 
-## Review Gap Analysis
+See `agents/ecom-trust.md` for the scoring rubric and check criteria.
 
-If review count < 10:
-- Flag as CRITICAL for high-price items (> $30)
-- Flag as HIGH for low-price items
-- Recommend: Judge.me (free), Stamped.io, or Shopify native reviews
-- Provide review request email template
-
-If reviews exist but no photos:
-- Flag as MEDIUM
-- Add photo incentive: "Send a photo, get 10% off your next order"
-
-## Policy Visibility Check
-
-Policies must be:
-- Linked in footer (REQUIRED)
-- Written in plain language (not legalese)
-- Accessible without login
-- Not hidden behind a JS modal on first visit
-
-Refund policy must state:
-- Number of days (30-day minimum recommended)
-- Condition of return (unopened / any condition)
-- Who pays return shipping
-
-## Output Format
+## User-Facing Output Format
 
 ```
 TRUST SCORE: XX/100
@@ -86,7 +37,7 @@ Reviews: XX/30 — [status]
 Policies: XX/20 — [status]
 Contact: XX/20 — [status]
 Brand Authority: XX/15 — [status]
-Badges: XX/15 — [status]
+Checkout Trust: XX/15 — [status]
 
 CRITICAL TRUST GAPS:
 - [issue] — conversion impact: [estimate]

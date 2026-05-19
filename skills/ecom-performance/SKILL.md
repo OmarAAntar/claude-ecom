@@ -9,69 +9,32 @@ category: ecommerce
 
 # Performance Audit
 
+User-invokable: `/ecom performance <url>`
+
+## When to Use
+
+Run when the user asks about page speed, Core Web Vitals, LCP/INP/CLS, app bloat, or slow site.
+
+## Orchestration
+
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch HTML via `scripts/fetch_page.py`
+3. Run `scripts/pagespeed.py <url>` to get live CrUX + Lighthouse data
+4. Detect platform (see `skills/ecom/SKILL.md` routing table)
+5. Spawn `agents/ecom-performance.md` with the HTML, PageSpeed JSON, platform, and URL
+6. Format the agent's JSON output using the user-facing template below
+
 ## Data Sources
 
-1. **PageSpeed Insights API** (primary): `scripts/pagespeed.py <url>`
-   - Returns real CrUX field data if available
-   - Falls back to Lighthouse lab data
-2. **HTML analysis** (secondary): count scripts, images, third-party domains
-3. **Platform baseline** (fallback): known performance ranges per platform
+1. **PageSpeed Insights API** (primary): `scripts/pagespeed.py <url>` — returns CrUX field data if available, else Lighthouse lab data
+2. **HTML analysis** (secondary): scripts, images, third-party domains
+3. **Platform baseline** (fallback): known ranges per platform
 
-## Core Web Vitals Thresholds (2025)
+## Scoring Rubric & Check Criteria
 
-| Metric | Good | Needs Work | Poor |
-|---|---|---|---|
-| LCP | ≤ 2.5s | 2.5–4.0s | > 4.0s |
-| INP | ≤ 200ms | 200–500ms | > 500ms |
-| CLS | ≤ 0.1 | 0.1–0.25 | > 0.25 |
-| FCP | ≤ 1.8s | 1.8–3.0s | > 3.0s |
-| TTFB | ≤ 800ms | 800–1800ms | > 1800ms |
+See `agents/ecom-performance.md` for the scoring rubric and check criteria.
 
-Note: Use INP only. Never reference FID (deprecated March 2024).
-
-## Scoring (100 pts)
-
-| Check | Points |
-|---|---|
-| Mobile LCP ≤ 2.5s | 15 |
-| Mobile INP ≤ 200ms | 12 |
-| Mobile CLS ≤ 0.1 | 10 |
-| Mobile FCP ≤ 1.8s | 8 |
-| TTFB ≤ 800ms | 8 |
-| Hero/LCP image preloaded | 7 |
-| WebP/AVIF images served | 7 |
-| No render-blocking scripts before LCP | 8 |
-| Third-party scripts deferred | 6 |
-| Shopify app count ≤ 10 (if Shopify) | 5 |
-| Explicit width/height on all images | 5 |
-| Font-display: swap on web fonts | 4 |
-| CDN serving assets (not origin) | 5 |
-
-## Platform-Specific Root Causes
-
-### Shopify
-- LCP: Hero image not preloaded; Canva/Figma PNG not compressed
-- INP: Marquee announcement bar JS loop; Shop Pay event listeners
-- CLS: Announcement bar height not reserved; Poppins font swap
-- TTFB: Shopify CDN PoP may be far from target market
-
-### WooCommerce
-- Multiple plugin CSS/JS files not combined
-- WordPress admin bar loaded for logged-in users (disable for frontend)
-- No object cache (Redis/Memcached)
-
-### Custom/Next.js
-- CSR content not server-rendered — check for SSR/SSG
-- Large JS bundle; check for tree-shaking
-
-## Geographic Performance Note
-
-If market is Lebanon, MENA, Southeast Asia, or Africa:
-- Note that major CDN PoPs may be 200–600ms away
-- Recommend Cloudflare as reverse proxy (has Beirut, Dubai, Singapore PoPs)
-- Estimate TTFB improvement from Cloudflare: −300–500ms
-
-## Output Format
+## User-Facing Output Format
 
 ```
 PERFORMANCE SCORE: XX/100

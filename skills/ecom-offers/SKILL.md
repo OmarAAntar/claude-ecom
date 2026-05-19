@@ -9,70 +9,25 @@ category: ecommerce
 
 # Offer & Pricing Strategy Audit
 
-## Scoring Weights (100 pts)
+User-invokable: `/ecom offers <url>`
 
-| Check | Points |
-|---|---|
-| Hero offer visible on homepage (not just "shop now") | 10 |
-| Price anchoring shown (compare-at price crossed out) | 8 |
-| Savings amount shown ("You save $10") | 5 |
-| Psychological pricing used ($X.99 vs round numbers) | 4 |
-| Free shipping threshold shown and prominent | 8 |
-| Bundle offer present (buy 2 get X) | 8 |
-| Volume discount tiers present | 5 |
-| Post-purchase upsell present | 7 |
-| In-cart upsell / cross-sell present | 7 |
-| Pre-checkout bump offer | 6 |
-| Urgency signal present (countdown, stock level) | 6 |
-| Scarcity signal present ("Only 3 left") | 5 |
-| Gift wrapping / personalization upsell | 3 |
-| Subscription / repeat purchase option | 4 |
-| Clearance / sale collection present | 4 |
-| Loyalty / points program | 3 |
-| Referral program present | 4 |
-| BNPL option (Klarna, Afterpay, Shop Pay installments) | 3 |
+## When to Use
 
-## Pricing Analysis
+Run when the user asks about pricing, bundles, promotions, AOV, upsells, free shipping thresholds, or offer strategy.
 
-### Price Anchoring
-Is there a crossed-out "Compare at" price?
-- PASS: Shown clearly next to the sale price
-- FAIL: No anchor price shown (customer has no reference)
-- WARNING: Fake anchoring — compare-at price that was never real (FTC/ASA risk)
+## Orchestration
 
-### Bundle Opportunities
-Based on catalog:
-- Same category bundles: "Buy 2 car mounts, save 15%"
-- Complementary bundles: "Car mount + phone cable"
-- Gift bundles: "Set of 3 for gifting"
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch HTML via `scripts/fetch_page.py`
+3. Detect platform (see `skills/ecom/SKILL.md` routing table)
+4. Spawn `agents/ecom-offers.md` with the fetched HTML and URL
+5. Format the agent's JSON output using the user-facing template below
 
-### Upsell Timing
-| Upsell type | Best placement | Expected AOV lift |
-|---|---|---|
-| Pre-ATC (frequently bought with) | Product page | +8–12% |
-| In-cart bump | Cart page | +5–10% |
-| Pre-checkout bump | Before payment step | +10–20% |
-| Post-purchase 1-click | Thank-you page | +15–30% |
+## Scoring Rubric & Check Criteria
 
-## AOV Calculator
+See `agents/ecom-offers.md` for the scoring rubric and check criteria.
 
-Current AOV estimate based on visible product prices.
-Target AOV with bundle + upsell strategy.
-Gap = opportunity to close.
-
-## Urgency & Scarcity Audit
-
-Legitimate urgency signals (use these):
-- Real countdown to sale end
-- Real stock levels ("Only 3 left in stock")
-- "Order in next X hours for delivery by [date]"
-
-Fake urgency signals (flag as risk):
-- Perpetual countdowns that reset
-- Fake "10 people viewing this" notifications
-- False "Last 1 in stock" when stock is unlimited
-
-## Output Format
+## User-Facing Output Format
 
 ```
 OFFERS SCORE: XX/100

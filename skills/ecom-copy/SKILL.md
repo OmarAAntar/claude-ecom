@@ -9,73 +9,25 @@ category: ecommerce
 
 # Copy & Messaging Audit
 
-## Scoring Weights (100 pts)
+User-invokable: `/ecom copy <url>`
 
-| Check | Points |
-|---|---|
-| Homepage hero has clear value proposition (who + what + why) | 12 |
-| H1 present and benefit-focused | 8 |
-| CTA copy is specific ("Get 40% Off Today" vs "Shop Now") | 7 |
-| Product descriptions are benefit-led | 8 |
-| No unsubstantiated superlatives ("best", "#1", "world's finest") | 6 |
-| No overused AI content markers ("unique", "elevate", "seamlessly") | 6 |
-| Product copy addresses the main objection | 7 |
-| Social proof copy is specific (numbers, names, outcomes) | 6 |
-| Urgency copy is honest and specific | 5 |
-| Tone is consistent across all pages | 5 |
-| Copy is readable at ≤ Grade 9 level | 5 |
-| No spelling or grammar errors | 6 |
-| Meta descriptions are action-oriented | 5 |
-| Announcement bar copy has a clear offer | 4 |
-| Footer copy is not generic | 4 |
-| About page copy is personal and credible | 6 |
+## When to Use
 
-## Hero Copy Framework
+Run when the user asks about copy quality, headlines, product descriptions, value propositions, tone, or AI-content concerns.
 
-A strong hero follows this structure:
-```
-H1: [What you get] — [For whom] — [Key differentiator]
-Subheadline: [Expand on the most important benefit or remove friction]
-CTA: [Specific action] → [Specific outcome]
-```
+## Orchestration
 
-Examples:
-- WEAK: "Premium Gadgets & Unique Gifts"
-- STRONG: "Tech Gifts That Actually Get Used — Delivered Across Lebanon in 1–4 Days"
+1. Validate the URL via `scripts/fetch_page.py validate_url()`
+2. Fetch HTML via `scripts/fetch_page.py`
+3. Detect platform (see `skills/ecom/SKILL.md` routing table)
+4. Spawn `agents/ecom-copy.md` with the fetched HTML and URL
+5. Format the agent's JSON output using the user-facing template below
 
-## CTA Copy Grading
+## Scoring Rubric & Check Criteria
 
-| CTA Text | Grade | Notes |
-|---|---|---|
-| "Shop Now" | D | Generic, no benefit |
-| "Buy Now" | C | Clear but no hook |
-| "Get Free Shipping Today" | B | Benefit-focused |
-| "Claim Your 20% Off" | A | Ownership + urgency |
-| "Send a Gift — Free Delivery" | A+ | Addresses the use case |
+See `agents/ecom-copy.md` for the scoring rubric and check criteria.
 
-## AI Content Detection
-
-Flag if 3+ of these words appear in product descriptions:
-- "unique", "elevate", "seamlessly", "effortlessly", "stunning", "innovative", "exceptional", "meticulously", "unparalleled", "embark", "delve"
-
-These patterns are associated with low-quality AI content by Google's QRG evaluators.
-
-## Objection Handling Check
-
-For each product, identify the #1 customer objection and check if the copy addresses it:
-- Gadgets: "Will it work with my phone?" → compatibility statement required
-- Gifts: "Will it arrive on time?" → delivery date estimate required
-- High-price: "Is it worth it?" → comparison to alternatives + ROI framing needed
-- COD markets: "Is this store legit?" → trust copy + WhatsApp required
-
-## Readability Check
-
-Target: Grade 8–9 (Flesch-Kincaid).
-- Sentences > 25 words: flag for splitting
-- Paragraphs > 4 sentences: flag for breaking up
-- Passive voice > 20% of sentences: flag for rewriting
-
-## Output Format
+## User-Facing Output Format
 
 ```
 COPY SCORE: XX/100
