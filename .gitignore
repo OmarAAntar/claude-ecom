@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Generated audit artifacts
+ECOM-AUDIT-REPORT.md
+ACTION-PLAN.md
+ecom-report.pdf
