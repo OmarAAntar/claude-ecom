@@ -58,10 +58,13 @@ Map the full upsell stack and where each is placed:
 
 | Upsell type | Best placement | Expected AOV lift |
 |---|---|---|
-| Pre-ATC (frequently bought with) | Product page | +8–12% |
-| In-cart bump | Cart page | +5–10% |
-| Pre-checkout bump | Before payment step | +10–20% |
-| Post-purchase 1-click | Thank-you page | +15–30% |
+| Pre-ATC (frequently bought with) | Product page | +5–15% (industry estimate, varies by vertical) |
+| In-cart bump | Cart page | +3–12% (industry estimate, varies by vertical) |
+| Pre-checkout bump | Before payment step | +8–25% (Shopify checkout-extension and CartHook benchmarks) |
+| Post-purchase 1-click | Thank-you page | +10–35% (Shopify ReConvert / AfterSell benchmarks) |
+
+Ranges are vendor-reported benchmarks. Actual lift depends on offer
+relevance, AOV band, and traffic source — treat as estimates.
 
 For each stage, record: present / missing, and what offer is shown.
 
@@ -69,7 +72,7 @@ For each stage, record: present / missing, and what offer is shown.
 
 Based on visible product prices, estimate:
 - Current AOV (average of visible product prices)
-- Potential AOV with full bundle + upsell stack (+20–40% is achievable)
+- Potential AOV with full bundle + upsell stack: +15–45% achievable (industry estimate, varies by vertical and current AOV)
 
 ## Scoring (100 pts)
 

@@ -38,12 +38,15 @@ Look for evidence of these flows by inspecting installed apps/scripts:
 
 | Flow | Revenue impact | Setup time |
 |---|---|---|
-| Abandoned cart (1hr / 24hr / 72hr) | Highest (5–15% of abandoned carts recovered) | 30 min |
-| Post-purchase welcome + upsell | High (+15–30% on accepting customers) | 1 hour |
-| Review request (Day 7–14 post-ship) | High (indirect +3–8% conversion) | 20 min |
-| Browse abandonment | Medium | 1 hour |
-| Win-back (90-day lapse) | Medium (5–10% of lapsed customers) | 30 min |
-| Loyalty milestone | Low | 2 hours |
+| Abandoned cart (1hr / 24hr / 72hr) | Highest — 3–18% of abandoned carts recovered (Klaviyo / Omnisend benchmark reports) | 30 min |
+| Post-purchase welcome + upsell | High — +10–35% AOV on accepting customers (Shopify ReConvert / AfterSell benchmarks) | 1 hour |
+| Review request (Day 7–14 post-ship) | High — indirect +3–10% conversion via added social proof (industry estimate, varies by vertical) | 20 min |
+| Browse abandonment | Medium — 1–5% recovery of browse sessions (industry estimate, varies by vertical) | 1 hour |
+| Win-back (90-day lapse) | Medium — 3–12% reactivation of lapsed customers (Klaviyo benchmark, varies by vertical) | 30 min |
+| Loyalty milestone | Low — long-tail retention lift (industry estimate, varies by vertical) | 2 hours |
+
+Ranges are vendor-reported benchmarks. Treat as estimates — actual
+performance depends on list size, list quality, AOV band, and offer.
 
 ### Abandoned Cart
 - Look for Klaviyo, Omnisend, Mailchimp, or Shopify Email integration

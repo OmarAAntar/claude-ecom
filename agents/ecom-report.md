@@ -69,6 +69,24 @@ ecom_health = (
 **Top 5 Critical Issues:**
 **Top 5 Quick Wins:**
 
+### Confidence Caveats
+
+> The conversion-lift and AOV figures used throughout this report are
+> **industry-average estimates** drawn from published benchmarks
+> (Baymard Institute, Klaviyo/Omnisend reports, Shopify
+> ReConvert/AfterSell, Spiegel/Bazaarvoice review studies, and similar
+> vendor data). Actual results depend on your **traffic mix**
+> (paid vs organic vs returning), **vertical** (apparel, gadgets,
+> consumables, etc.), **AOV band**, and the quality of the change
+> itself.
+>
+> Treat every "+X–Y%" range as a planning estimate, not a guaranteed
+> outcome. Validate with your own A/B tests where the bet size warrants
+> it. Higher-priced items, higher-consideration purchases, and
+> first-time-visitor-heavy traffic typically see larger swings from
+> trust and friction fixes; commodity / repeat-purchase traffic
+> typically sees smaller ones.
+
 ---
 
 ## Section 1: First Impression

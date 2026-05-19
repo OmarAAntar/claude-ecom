@@ -87,14 +87,17 @@ List anything that creates friction or doubt before clicking ATC:
 
 ## Revenue Impact Framing
 
-For every issue, estimate conversion impact:
-- No sticky ATC mobile: ~4% conversion loss (note in output, but defer scoring to ecom-mobile)
-- No reviews on product page: ~18% conversion loss for first-time visitors
-- No return policy visible on product page: ~7% conversion loss
-- No exit intent: ~2–3% lost recovery
-- Poor CTA contrast: ~2% conversion loss
-- No guest checkout: ~35% of visitors abandon at account creation
-- Checkout > 3 steps: ~20% drop-off per extra step
+These are industry averages. Report estimates as ranges, not single
+numbers, and tag findings as estimates rather than guarantees. Actual
+impact varies with traffic mix, vertical, and AOV.
+
+- No sticky ATC mobile: ~3–6% conversion loss (industry estimate, varies by vertical; note in output, but defer scoring to ecom-mobile)
+- No reviews on product page: ~10–25% conversion loss for first-time visitors (Spiegel Research Center / Bazaarvoice review-impact studies)
+- No return policy visible on product page: ~4–10% conversion loss (industry estimate, varies by vertical)
+- No exit intent: ~2–4% lost recovery (industry estimate, varies by vertical)
+- Poor CTA contrast: ~1–3% conversion loss (industry estimate, varies by vertical)
+- No guest checkout: ~25–35% of visitors abandon at forced account creation (Baymard Institute checkout-abandonment research)
+- Checkout > 3 steps: ~10–20% drop-off per extra step (Baymard Institute checkout usability)
 
 ## Output
 

@@ -44,10 +44,13 @@ For each product found, suggest the ideal cross-sell:
 
 | Touchpoint | AOV lift | Setup effort |
 |---|---|---|
-| Product page cross-sell | +8–12% | Low |
-| Cart upsell | +5–10% | Low |
-| Pre-checkout bump | +10–20% | Low |
-| Post-purchase 1-click | +15–30% | Medium |
+| Product page cross-sell | +5–15% (industry estimate, varies by vertical) | Low |
+| Cart upsell | +3–12% (industry estimate, varies by vertical) | Low |
+| Pre-checkout bump | +8–25% (Shopify checkout-extension and CartHook benchmarks) | Low |
+| Post-purchase 1-click | +10–35% (Shopify ReConvert / AfterSell benchmarks) | Medium |
+
+Ranges are vendor-reported benchmarks. Actual lift depends on offer
+relevance, AOV band, and traffic source — treat as estimates.
 
 ## Recommended Apps
 
