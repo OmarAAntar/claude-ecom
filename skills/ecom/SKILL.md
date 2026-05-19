@@ -49,15 +49,15 @@ Detect platform from HTML signals before auditing:
 
 | Category | Weight |
 |---|---|
-| First Impression (Header + Hero) | 12% |
 | Product Presentation | 18% |
 | Conversion Rate Optimization | 18% |
-| Offer & Pricing Strategy | 15% |
+| Offer & Pricing Strategy | 13% |
 | Trust & Social Proof | 12% |
 | Mobile Experience | 10% |
-| Copy & Messaging | 8% |
-| Retention & Email | 4% |
-| Performance (CWV) | 3% |
+| Performance (CWV) | 10% |
+| First Impression (Header + Hero) | 8% |
+| Copy & Messaging | 6% |
+| Retention & Email | 5% |
 
 ## Output Standard
 

@@ -55,15 +55,15 @@ Collect scores from all agents. Apply weights:
 
 | Category | Agents | Weight |
 |---|---|---|
-| First Impression | Header + Hero | 12% |
 | Product Presentation | Products | 18% |
 | Conversion Rate Optimization | CRO + Cart | 18% |
-| Offer & Pricing Strategy | Offers + Upsells | 15% |
+| Offer & Pricing Strategy | Offers + Upsells | 13% |
 | Trust & Social Proof | Trust | 12% |
 | Mobile Experience | Mobile | 10% |
-| Copy & Messaging | Copy | 8% |
-| Retention & Email | Retention | 4% |
-| Performance (CWV) | Performance | 3% |
+| Performance (CWV) | Performance | 10% |
+| First Impression | Header + Hero | 8% |
+| Copy & Messaging | Copy | 6% |
+| Retention & Email | Retention | 5% |
 
 Overall = sum of (score × weight).
 

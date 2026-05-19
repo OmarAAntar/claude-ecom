@@ -19,15 +19,15 @@ cro_score = (cro_score + cart_score) / 2
 offers_score = (offers_score + upsells_score) / 2
 
 ecom_health = (
-  header_hero_score * 0.12 +
   products_score * 0.18 +
   cro_score * 0.18 +
-  offers_score * 0.15 +
+  offers_score * 0.13 +
   trust_score * 0.12 +
   mobile_score * 0.10 +
-  copy_score * 0.08 +
-  retention_score * 0.04 +
-  performance_score * 0.03
+  performance_score * 0.10 +
+  header_hero_score * 0.08 +
+  copy_score * 0.06 +
+  retention_score * 0.05
 )
 ```
 
