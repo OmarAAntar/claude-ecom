@@ -20,6 +20,7 @@ Drop a store URL, get back a scored audit report with:
 - **Copy audit** — with ready-to-use rewrites for every weak headline and CTA
 - **Performance** — Core Web Vitals (LCP, INP, CLS) via PageSpeed Insights
 - **Retention** — email capture, abandoned cart, post-purchase flows
+- **Accessibility** — folded into CRO, product, and mobile scoring: CTA contrast, focus states, keyboard-accessible variants, alt text, tap targets, viewport zoom, form labels. A11y failures both cost conversion **and** expose US stores to ADA lawsuits (a growing risk for Shopify and WooCommerce merchants).
 - **PDF report** — professional A4 with charts, pass/fail tables, and a 30-day sprint plan
 
 ## Sample Output

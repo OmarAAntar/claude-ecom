@@ -77,13 +77,31 @@ List anything that creates friction or doubt before clicking ATC:
 - Wishlist?
 - "Notify me when back in stock" on OOS items?
 
+## Accessibility (CRO impact)
+
+A11y problems on conversion elements cost sales and also expose the
+store to ADA lawsuits (a real and growing risk for US Shopify and
+WooCommerce stores). Check:
+
+- **CTA color contrast ≥ 4.5:1** on the primary ATC/checkout buttons
+  (WCAG 2.1 AA, 1.4.3). Low-contrast CTAs measurably reduce clicks
+  even for fully-sighted users.
+- **Visible focus states on keyboard nav** for ATC, variant selectors,
+  and checkout form fields (WCAG 2.4.7). Tab through the page — if the
+  focused element isn't visually distinguishable, fail it.
+- **ATC button has an accessible name** — either readable text inside
+  the button, an `aria-label`, or an `aria-labelledby` pointing at
+  visible text (WCAG 4.1.2). Icon-only ATC buttons without an
+  accessible name fail this check.
+
 ## Scoring (100 pts)
 
-- CTA quality across product page + cart + checkout: 25
-- Product page conversion elements: 25
+- CTA quality across product page + cart + checkout: 20
+- Product page conversion elements: 23
 - Purchase barrier removal: 25
 - Exit intent: 10
-- Cart + checkout friction summary: 15
+- Cart + checkout friction summary: 14
+- Accessibility (CRO impact — contrast, focus, accessible names): 8
 
 ## Revenue Impact Framing
 

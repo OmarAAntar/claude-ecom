@@ -39,15 +39,38 @@ Use the Agent tool to spawn all 13 agents simultaneously. Pass each agent:
 | Hero | `agents/ecom-hero.md` | Value prop, H1, CTA, above-fold content |
 | Products | `agents/ecom-products.md` | Descriptions, images, specs, variants |
 | Cart | `agents/ecom-cart.md` | Cart page UX, upsells, friction |
-| CRO | `agents/ecom-cro.md` | Checkout flow, form friction, CTAs |
+| CRO | `agents/ecom-cro.md` | Checkout flow, form friction, CTAs, CTA-level accessibility |
 | Offers | `agents/ecom-offers.md` | Pricing, bundles, promotions, anchoring |
 | Upsells | `agents/ecom-upsells.md` | Post-purchase, cross-sells, BOGO |
 | Trust | `agents/ecom-trust.md` | Reviews, badges, guarantees, policies |
-| Mobile | `agents/ecom-mobile.md` | 390px viewport, tap targets, mobile CRO |
+| Mobile | `agents/ecom-mobile.md` | 390px viewport, tap targets, mobile CRO, mobile accessibility (target size, zoom, form labels) |
 | Performance | `agents/ecom-performance.md` | CWV, LCP, INP, CLS, app bloat |
 | Copy | `agents/ecom-copy.md` | Headlines, descriptions, CTAs, tone |
 | Competitors | `agents/ecom-competitors.md` | 3 competitors, price/offer/trust gaps |
 | Retention | `agents/ecom-retention.md` | Popups, email capture, post-purchase flows |
+
+### Accessibility coverage
+
+A11y is **not a separate agent** and is **not a separate weight
+category**. It is folded into the existing CRO, Products, and Mobile
+scoring so that a11y wins lift the same scores that conversion wins
+do. Coverage by agent:
+
+- `ecom-cro` — CTA color contrast (≥ 4.5:1, WCAG 1.4.3), visible
+  focus states on keyboard nav (WCAG 2.4.7), ATC button has an
+  accessible name (WCAG 4.1.2). Worth 8 of the 100 CRO points.
+- `ecom-products` — alt text on product images (WCAG 1.1.1),
+  variant selectors keyboard-accessible (WCAG 2.1.1), price not
+  conveyed by color alone (WCAG 1.4.1). Worth 5 of the 100 Products
+  points.
+- `ecom-mobile` — tap targets ≥ 44×44px (WCAG 2.5.5), viewport zoom
+  not disabled (WCAG 1.4.4), form inputs have associated labels
+  (WCAG 1.3.1 / 3.3.2). Worth 5 of the 100 Mobile points.
+
+Frame a11y findings as **both a CRO issue and a legal-risk issue**:
+ADA lawsuits against US e-commerce sites (Shopify and WooCommerce in
+particular) have risen sharply, and even a Tier-A WCAG failure is
+sufficient grounds for a demand letter.
 
 ## Step 3 — Compute ECOM Health Score
 
