@@ -1,6 +1,6 @@
 ---
 name: ecom-performance
-description: E-commerce performance audit. Checks Core Web Vitals (LCP, INP, CLS), page speed, image optimization, app bloat, and CDN usage. Uses PageSpeed Insights API for live data. Use when user says slow site, page speed, Core Web Vitals, or performance.
+description: Performance audit for an e-commerce store using live PageSpeed Insights data — Core Web Vitals (LCP, INP, CLS, FCP, TTFB), image optimization (WebP/AVIF, preload, fetchpriority, explicit dimensions), render-blocking scripts, Shopify-app bloat, font-display swap, and geographic TTFB considerations for distant CDN PoPs. Use when the user thinks the store feels slow, is bouncing on mobile, or wants the CWV numbers for SEO. Natural trigger phrases include: my site is slow, page speed, Core Web Vitals, LCP, INP, CLS, fix my speed, why is my store slow, mobile speed issues, Lighthouse score, PageSpeed.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

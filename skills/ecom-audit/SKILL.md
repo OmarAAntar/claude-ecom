@@ -1,6 +1,6 @@
 ---
 name: ecom-audit
-description: Full e-commerce store audit with parallel sub-agent delegation. Fetches store HTML, detects platform, spawns 13 specialist agents, computes weighted ECOM Health Score (0-100), generates PDF report. Use when user says full audit, audit my store, or complete store review.
+description: Run the complete e-commerce store audit — fetches the store, detects platform and market, spawns 14 specialist agents in parallel, computes a weighted ECOM Health Score plus a separate Discoverability Score, and generates a PDF action plan with a 30-day sprint. Use when the user wants a thorough end-to-end review, a one-shot conversion + trust + mobile + performance + SEO check, or a PDF deliverable to share with their team. Natural trigger phrases include: full audit, audit my store, complete store review, run the full audit, deep audit, give me the whole report, comprehensive ecommerce review, score my store, run the audit suite.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

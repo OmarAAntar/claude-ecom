@@ -1,6 +1,6 @@
 ---
 name: ecom-copy
-description: Copy and messaging audit for e-commerce stores. Analyzes headlines, CTAs, product descriptions, value propositions, tone of voice, and persuasion elements. Use when user says copy, messaging, headlines, descriptions, or writing.
+description: Copy and messaging audit for an e-commerce store — H1 and value-prop clarity (the 5-second test), CTA specificity grading, product-description benefit-led vs spec-led check, AI-content red-flag detection (unique / elevate / seamlessly / stunning / unparalleled / embark / delve), unsubstantiated-superlative flags ("#1 in market"), objection handling, and readability targets. Use when the user wants ready-to-paste rewrites for headlines, CTAs, and product descriptions. Natural trigger phrases include: rewrite my headlines, fix my copy, my product descriptions sound generic, my hero is weak, sounds AI-written, my CTAs are vague, my value proposition is unclear, ad copy audit, messaging review.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

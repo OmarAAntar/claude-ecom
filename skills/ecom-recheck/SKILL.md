@@ -1,6 +1,6 @@
 ---
 name: ecom-recheck
-description: Re-audits a store and produces a delta report against a prior ECOM audit. Re-runs the full 14-agent audit, parses the previous ECOM-AUDIT-REPORT.md, and shows score changes, resolved issues, persistent issues, and new issues. Use when user says recheck, re-audit, what changed, score delta, or follow-up audit.
+description: Re-audit an e-commerce store and produce a delta report against a prior ECOM-AUDIT-REPORT.md — re-runs the full 14-agent audit, parses the previous report, and shows score changes per category plus which CRITICAL/HIGH issues are resolved, persistent, new, or had their severity change. Use when the user has shipped fixes since the last audit and wants to see what moved. Natural trigger phrases include: recheck my store, re-audit, follow-up audit, did my fixes work, score delta, what changed since last audit, compare to previous report, before-and-after audit, audit progress check.
 user-invokable: true
 argument-hint: <url> <previous-report-path>
 version: 1.0.0

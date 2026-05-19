@@ -1,6 +1,6 @@
 ---
 name: ecom-quick
-description: Fast e-commerce triage. Runs only 3 agents (hero, CRO, trust) and returns a top-line score and the top 3 critical issues in under 2 minutes. No PDF. Use when user says quick audit, fast check, triage, top issues, or just looking to spot-check a store before committing to a full audit.
+description: Fast e-commerce triage in under 2 minutes — runs only the hero, CRO, and trust agents to surface a top-line Quick Score and the top 3 critical issues, with no PDF. Use when the user wants a spot-check before deciding whether to invest in a full audit, or is in a hurry and wants the headline issues only. Natural trigger phrases include: quick audit, fast check, triage my store, spot-check this store, give me the top issues, what's the worst problem, ballpark score, take a quick look, just the highlights, 2-minute audit.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom-seo
-description: E-commerce SEO and AI-search discoverability audit. Checks meta tags, product schema, organization schema, sitemap/robots, AI crawler accessibility (GPTBot, ClaudeBot, PerplexityBot, Google-Extended), internal linking depth, canonicals, and image alt SEO quality. Reports a separate Discoverability Score that does not factor into the ECOM Health Score. Use when user says SEO, schema, robots, sitemap, AI crawlers, GPTBot, ClaudeBot, discoverability, or AI Overviews.
+description: SEO and AI-search discoverability audit for an e-commerce store — meta tags (title, description, OG, Twitter), Product and Organization JSON-LD schema completeness, sitemap.xml + robots.txt configuration, AI crawler accessibility (GPTBot / ClaudeBot / PerplexityBot / Google-Extended / Applebot-Extended — robots.txt boilerplate frequently blocks these by accident), internal linking depth to products (≤ 3 clicks), canonical tags on variant URLs, and image alt text quality. Reported as a separate Discoverability Score so SEO debt doesn't mask conversion-readiness. Use when the user wants to be found on Google and in AI Overviews / ChatGPT / Perplexity citations. Natural trigger phrases include: SEO audit, schema check, am I in AI Overviews, GPTBot blocked, ClaudeBot blocked, my robots.txt is wrong, sitemap broken, am I indexable, product schema validation, AI search visibility, discoverability check.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

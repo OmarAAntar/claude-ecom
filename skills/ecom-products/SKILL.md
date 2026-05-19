@@ -1,6 +1,6 @@
 ---
 name: ecom-products
-description: Product page audit for e-commerce stores. Analyzes descriptions, images, specifications, variants, reviews, schema markup, and content depth. Use when user says product pages, product descriptions, product images, or fix my listings.
+description: Product page audit for an e-commerce store — analyzes description quality and length, image count and lifestyle/studio mix, specifications, variants, reviews, Product schema, thin-content flags, and product-page accessibility (alt text, keyboard-accessible variants, price not conveyed by color alone). Use when the user wants to know why a specific product page isn't converting, whether their listings are thin, or whether their schema is correct. Natural trigger phrases include: fix my product pages, improve my listings, product descriptions audit, my product page isn't converting, are my images good enough, thin content check, product schema check, are my listings too short.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

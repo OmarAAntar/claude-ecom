@@ -1,6 +1,6 @@
 ---
 name: ecom-competitors
-description: Competitor analysis for e-commerce stores. Finds 3-5 direct competitors via web search, compares pricing, offers, trust signals, catalog depth, and positioning. Identifies gaps and opportunities. Use when user says competitors, competitive analysis, what are others doing, or how do I compare.
+description: Competitor scan for an e-commerce store — finds 3-5 direct competitors via web search (scoped to the store's market), fetches their homepages and flagship product pages, builds a comparison matrix across pricing, shipping, returns, reviews, payment methods, and content depth, and outputs a positioning recommendation plus quick wins to copy or differentiate from. Use when the user wants to benchmark, find positioning gaps, or pick which competitor tactics to imitate. Natural trigger phrases include: competitor analysis, who am I competing with, how do I compare, find competitors, competitive benchmark, what are others doing, positioning vs competitors, competitor pricing, competitor offers.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom-retention
-description: Email and retention audit for e-commerce stores. Checks popups, email capture, lead magnets, abandoned cart flows, post-purchase sequences, and loyalty programs. Use when user says email, retention, repeat customers, popups, or Klaviyo.
+description: Email and retention audit for an e-commerce store — popup quality (timing, offer, closeability), footer signup, abandoned-cart flow detection, post-purchase welcome and review-request flows, win-back sequences, loyalty/referral programs, WhatsApp/SMS channels, and market-specific weighting (full credit for Lebanon/GCC/MENA where WhatsApp is the primary channel; email-first for EU/UK; email + SMS for US). Use when the user wants to boost repeat purchase rate or recover abandoned carts. Natural trigger phrases include: improve repeat purchases, abandoned cart flow, email marketing audit, Klaviyo setup, fix my popups, post-purchase flow, customers don't come back, win-back emails, loyalty program ideas.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom-trust
-description: Trust and social proof audit for e-commerce stores. Checks reviews, badges, guarantees, policies, contact visibility, founder story, and press mentions. Use when user says trust issues, people aren't buying, or why don't customers trust my store.
+description: Trust and social-proof audit for an e-commerce store — reviews and ratings, third-party review platforms (Trustpilot, Judge.me, Google), money-back guarantees, return/refund policy clarity, contact-method visibility (WhatsApp, phone, address), founder/About page, payment-method icons, and market-specific trust signals (e.g. COD + WhatsApp for Lebanon, BNPL + Arabic surface for GCC). Use when the user suspects visitors don't trust the store enough to buy, or wants to make a new DTC brand feel legitimate. Natural trigger phrases include: trust issues, people don't trust my store, why aren't customers buying, social proof audit, do I look legit, fix my reviews, no one trusts my brand, look at my return policy, trust badges check.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom-mobile
-description: Mobile experience audit for e-commerce stores. Checks 390px viewport rendering, tap targets, thumb zones, mobile CRO, and mobile-specific trust signals. Use when user says mobile, phone experience, or mobile conversion.
+description: Mobile experience audit for an e-commerce store at the 390px iPhone-14 viewport — tap-target sizing and spacing, sticky ATC presence, 16px-min body font (to prevent iOS auto-zoom), no horizontal scroll, correct mobile keyboard input types on checkout forms, thumb-zone placement, and mobile-specific accessibility (WCAG 2.5.5 target size, viewport zoom not disabled, form labels). Use when the user knows most traffic is mobile but the conversion gap between mobile and desktop is huge. Natural trigger phrases include: fix my mobile, mobile conversion is bad, phone experience, mobile UX audit, tap targets, sticky ATC, my store on phones, mobile checkout issues, iPhone view, mobile-first audit.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom-offers
-description: Pricing and offer strategy audit for e-commerce stores. Analyzes price anchoring, bundles, upsells, promotions, free shipping thresholds, and psychological pricing. Use when user says pricing, offers, bundles, promotions, or how to increase average order value.
+description: Pricing and offer-strategy audit for an e-commerce store — price anchoring (crossed-out compare-at), psychological pricing (.99 / .95 endings), free-shipping threshold prominence, bundle types (volume / complementary / gift), the full upsell stack (pre-ATC, in-cart, pre-checkout bump, post-purchase 1-click), legitimate vs fake urgency signals, BNPL, loyalty/referral, and a current-vs-potential AOV estimate. Use when the user wants to raise AOV, add bundles, or fix flat promotions. Natural trigger phrases include: increase average order value, raise AOV, bundle ideas, upsell strategy, pricing audit, my offers are flat, free shipping threshold, fake urgency check, set up bundles, AOV is too low.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0

@@ -1,6 +1,6 @@
 ---
 name: ecom
-description: E-commerce store audit suite. Scores stores /100 across CRO, product pages, offers, trust, mobile, copy, and competitors. Generates a PDF action plan. TRIGGER when user says audit my store, ecom audit, check my website, review my shop, CRO audit, or any e-commerce store analysis request.
+description: Audit an e-commerce store and score it 0-100 across conversion, product pages, offers, trust, mobile, copy, retention, performance, and competitors. Generates a PDF action plan with a 30-day sprint. Use when the user asks about store conversion, why their store isn't converting, cart abandonment, checkout problems, mobile UX, competitor analysis, or wants a Shopify/WooCommerce/BigCommerce store reviewed. Natural trigger phrases include: audit my store, review my shop, CRO audit, why isn't my store converting, my conversion is low, check my Shopify, fix my checkout, mobile conversion issues, look at my ecommerce site, score my store, why are people leaving without buying.
 user-invokable: true
 argument-hint: "[command] [url]"
 version: 1.0.0

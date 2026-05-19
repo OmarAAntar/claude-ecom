@@ -1,6 +1,6 @@
 ---
 name: ecom-cro
-description: Conversion Rate Optimization audit for e-commerce stores. Analyzes checkout flow, CTAs, form friction, exit intent, and purchase barriers. Use when user says CRO, conversion, checkout issues, or why aren't people buying.
+description: Conversion rate optimization audit for an e-commerce store — analyzes product page, cart, and checkout CTAs, form friction, exit intent, micro-conversions, accessibility on conversion elements (contrast, focus states, accessible names), and the purchase barriers that stop visitors from buying. Use when the user wants to know why traffic isn't converting, why people are abandoning the cart, or where the checkout friction is hiding. Natural trigger phrases include: CRO audit, why aren't people buying, fix my conversion rate, cart abandonment, checkout abandonment, my conversion is low, lots of traffic no sales, checkout is broken, why are people leaving the cart, conversion barriers, find the friction.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
