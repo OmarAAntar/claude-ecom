@@ -25,6 +25,7 @@ You are the Claude ECOM orchestrator. Route user commands to the appropriate sub
 | `/ecom copy <url>` | ecom-copy | Copy & messaging audit |
 | `/ecom mobile <url>` | ecom-mobile | Mobile experience check |
 | `/ecom retention <url>` | ecom-retention | Email, popups, post-purchase flows |
+| `/ecom seo <url>` | ecom-seo | SEO + AI-search discoverability (separate Discoverability Score) |
 
 ## Routing Logic
 

@@ -28,10 +28,13 @@ Detect business type:
 
 ## Step 2 — Spawn All Agents in Parallel
 
-Use the Agent tool to spawn all 13 agents simultaneously. Pass each agent:
+Use the Agent tool to spawn all 14 agents simultaneously. Pass each agent:
 - The fetched HTML
 - The detected platform
 - The store URL
+
+For `ecom-seo`, also fetch and pass `/robots.txt`, `/sitemap.xml`, and
+the top 2–3 product page HTMLs before spawning.
 
 | Agent | File | Analyzes |
 |---|---|---|
@@ -48,6 +51,7 @@ Use the Agent tool to spawn all 13 agents simultaneously. Pass each agent:
 | Copy | `agents/ecom-copy.md` | Headlines, descriptions, CTAs, tone |
 | Competitors | `agents/ecom-competitors.md` | 3 competitors, price/offer/trust gaps |
 | Retention | `agents/ecom-retention.md` | Popups, email capture, post-purchase flows |
+| SEO | `agents/ecom-seo.md` | Meta tags, product/Organization schema, sitemap/robots, AI crawlers, link depth, canonicals, alt SEO. **Separate Discoverability Score — does not factor into ECOM Health Score.** |
 
 ### Accessibility coverage
 
