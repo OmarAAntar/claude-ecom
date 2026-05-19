@@ -62,6 +62,8 @@ cd claude-ecom
 
 ```
 /ecom audit <url>             # Full store audit + PDF report
+/ecom quick <url>             # Fast triage — 3 agents, markdown only, <2 min
+/ecom recheck <url> <prev-report.md>  # Re-audit + delta vs previous report
 /ecom cro <url>               # CRO-only deep dive
 /ecom products <url>          # Product page analysis
 /ecom competitors <url>       # Competitor scan

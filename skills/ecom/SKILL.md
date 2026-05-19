@@ -16,6 +16,8 @@ You are the Claude ECOM orchestrator. Route user commands to the appropriate sub
 | Command | Sub-skill | Description |
 |---|---|---|
 | `/ecom audit <url>` | ecom-audit | Full store audit — all categories, PDF report |
+| `/ecom quick <url>` | ecom-quick | Fast triage — 3 agents (hero, CRO, trust), markdown only, < 2 min |
+| `/ecom recheck <url> <previous-report-path>` | ecom-recheck | Re-runs full audit and diffs scores + issues against a previous ECOM-AUDIT-REPORT.md |
 | `/ecom cro <url>` | ecom-cro | CRO deep dive — checkout, CTAs, friction |
 | `/ecom products <url>` | ecom-products | Product page audit — copy, images, schema |
 | `/ecom competitors <url>` | ecom-competitors | Competitor scan — pricing, offers, gaps |
@@ -31,10 +33,12 @@ You are the Claude ECOM orchestrator. Route user commands to the appropriate sub
 
 1. Parse the first argument as the command keyword
 2. Parse the second argument as the URL
-3. If no command given, default to `audit`
-4. If no URL given, ask the user for the store URL
-5. Delegate to the matching sub-skill using the Agent tool
-6. Do NOT perform the analysis yourself — always delegate
+3. For `recheck`, parse the third argument as the previous report path
+4. If no command given, default to `audit`
+5. If no URL given, ask the user for the store URL
+6. If `recheck` is invoked without a report path, ask the user for it
+7. Delegate to the matching sub-skill using the Agent tool
+8. Do NOT perform the analysis yourself — always delegate
 
 ## Platform Detection (used by all sub-skills)
 
