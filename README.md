@@ -11,7 +11,6 @@ Inspired by [claude-seo](https://github.com/AgriciDaniel/claude-seo).
 Drop a store URL, get back a scored audit report with:
 
 - **ECOM Health Score** (0–100) across 9 weighted categories
-- **Discoverability Score** (0–100) — reported separately. SEO + AI-search (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) crawler access, schema, sitemap/robots, canonicals, link depth
 - **Competitor scan** — finds 3–5 direct competitors, builds a comparison matrix
 - **CRO analysis** — checkout friction, CTA quality, purchase barriers
 - **Product page audit** — content depth, image quality, schema, reviews
@@ -63,7 +62,6 @@ cd claude-ecom
 ```
 /ecom audit <url>             # Full store audit + PDF report
 /ecom quick <url>             # Fast triage — 3 agents, markdown only, <2 min
-/ecom recheck <url> <prev-report.md>  # Re-audit + delta vs previous report
 /ecom cro <url>               # CRO-only deep dive
 /ecom products <url>          # Product page analysis
 /ecom competitors <url>       # Competitor scan
@@ -73,7 +71,6 @@ cd claude-ecom
 /ecom trust <url>             # Trust & social proof audit
 /ecom retention <url>         # Email & retention audit
 /ecom performance <url>       # Speed & Core Web Vitals
-/ecom seo <url>               # SEO + AI-search discoverability (separate score)
 ```
 
 ## Architecture

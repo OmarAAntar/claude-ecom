@@ -23,12 +23,6 @@ Does **NOT** own:
 
 When a CTA already audited elsewhere also has a mobile-specific problem, only score the mobile failure mode (tap-target size, sticky-ATC absence, thumb-zone violation). Do not re-score the CTA itself.
 
-## Inputs
-
-You receive: mobile HTML, store URL, and `market`. Market does not
-change tap-target / zoom / label requirements (those are WCAG and
-universal). It may affect which form fields you expect to see in
-checkout (e.g. local-courier address fields in `lebanon`).
 
 ## Your Task
 
@@ -97,36 +91,16 @@ On mobile, the bottom-center is easiest to reach; the top-left is hardest.
 - Video does not autoplay and block content
 - No horizontal scroll anywhere
 
-## Accessibility
-
-A11y failures on mobile both cost conversion and expose the store to
-ADA lawsuits (a real and rising risk for US Shopify and WooCommerce
-merchants). Check:
-
-- **Tap targets ≥ 44×44px** (WCAG 2.5.5 Target Size). This formalizes
-  the touch-target sizing rule. The existing "Touch target sizes"
-  category measures spacing and density; this a11y check enforces the
-  44px minimum and flags any sub-44px interactive element.
-- **Viewport zoom not disabled** (WCAG 1.4.4). Inspect the
-  `<meta name="viewport">` tag and fail if it contains
-  `user-scalable=no`, `user-scalable=0`, or `maximum-scale=1`. Many
-  themes ship this by default — it is a guaranteed a11y failure.
-- **Form inputs have associated labels** (WCAG 1.3.1 / 3.3.2). Every
-  `<input>` in the checkout and email-capture forms must have either
-  a `<label for="…">`, an `aria-label`, or an `aria-labelledby`.
-  Placeholder text alone does not satisfy this.
-
 ## Scoring (100 pts)
 
 - CTA visibility above fold (page-level visibility, not CTA copy quality): 20
-- Touch target spacing + density (≥ 8px between adjacent targets): 10
+- Touch target sizes: 15
 - No horizontal scroll: 15
 - Font size ≥ 16px: 10
 - Correct mobile input types: 10
 - Sticky ATC presence: 12
 - Image swipe: 8
 - Mobile nav function: 10
-- Accessibility (44px target size, zoom not disabled, form labels): 5
 
 ## Output
 
@@ -145,9 +119,6 @@ Return JSON:
   "low": [],
   "quick_wins": [],
   "css_fixes": [],
-  "out_of_scope_observations": [],
   "notes": ""
 }
 ```
-
-Use `out_of_scope_observations` to flag CTA-copy or contrast issues you noticed (those belong to ecom-cro / ecom-hero / ecom-header).

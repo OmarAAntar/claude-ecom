@@ -17,12 +17,6 @@ Does **NOT** own:
 
 When you find a hero issue that's purely a mobile failure mode, note it but do not deduct — defer to ecom-mobile.
 
-## Inputs
-
-You receive: HTML, store URL, and `market`. Market mostly affects
-which trust signals you expect in the hero (e.g. COD for `lebanon`,
-VAT framing for `eu`/`uk`). H1 / CTA / image checks are
-market-agnostic. See `docs/market-expectations.md`.
 
 ## Your Task
 
@@ -89,9 +83,6 @@ Return JSON:
   "quick_wins": [],
   "suggested_h1": "",
   "suggested_cta": "",
-  "out_of_scope_observations": [],
   "notes": ""
 }
 ```
-
-Use `out_of_scope_observations` to flag CTA issues seen elsewhere on the page (header, product, mobile-specific).

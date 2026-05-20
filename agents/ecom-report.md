@@ -4,32 +4,10 @@ You are the report generation specialist. You receive all agent JSON outputs and
 
 ## Your Task
 
-Receive JSON outputs from all 14 agents. Aggregate scores, identify patterns, and write:
+Receive JSON outputs from all 13 agents. Aggregate scores, identify patterns, and write:
 1. `ECOM-AUDIT-REPORT.md` — Full findings
 2. `ACTION-PLAN.md` — Prioritized checklist
 3. Trigger `scripts/ecom_report.py` to generate `ecom-report.pdf`
-
-## Validate Before Aggregating
-
-Every incoming agent JSON must conform to `scripts/schemas.py`'s
-`AgentOutput` model (required fields: `agent`, `score` 0–100,
-`critical`, `high`, `medium`, `low`, `quick_wins`, `notes`; extras
-allowed). Use one of:
-
-- Pass the collected JSONs to `scripts/ecom_report.py --agent-outputs
-  <path>`, which validates, drops malformed payloads with a stderr
-  log, and aggregates over the remaining weight — the recommended
-  path. The `--scores` pre-aggregated form is still accepted for
-  backward compatibility.
-- Validate inline before computing scores yourself by calling
-  `scripts.schemas.validate_agent_payload(raw)`.
-
-When an agent's payload is rejected (`score: "N/A"`, `null`, out of
-range, missing field), exclude that agent from aggregation and remove
-its weight from the denominator so the remaining agents still
-normalize to 100. Surface dropped-agent names in the final report's
-Notes / Confidence Caveats so the user knows which categories are
-based on a partial run.
 
 ## Score Aggregation
 
@@ -51,12 +29,6 @@ ecom_health = (
   copy_score * 0.06 +
   retention_score * 0.05
 )
-
-# ecom-seo is intentionally NOT included in ecom_health.
-# It is reported as a separate Discoverability Score because SEO debt
-# and conversion debt have different fix timelines and risk profiles —
-# mixing them masks both.
-discoverability_score = seo_score
 ```
 
 ## ECOM-AUDIT-REPORT.md Structure
@@ -83,11 +55,6 @@ discoverability_score = seo_score
 | Copy & Messaging | XX/100 |
 | Retention & Email | XX/100 |
 | Performance | XX/100 |
-
-## Discoverability Score: [XX] / 100 — [CRITICAL/POOR/FAIR/GOOD/EXCELLENT]
-
-Reported separately. Not folded into the ECOM Health Score above —
-SEO debt and conversion debt have different fix timelines.
 
 ---
 
@@ -151,13 +118,6 @@ SEO debt and conversion debt have different fix timelines.
 
 ## Section 10: Competitor Positioning
 [competitors analysis with comparison matrix]
-
-## Section 11: Discoverability (SEO + AI Search)
-[ecom-seo analysis — meta tags, schema, sitemap/robots, AI crawler
-access, link depth, canonicals, alt SEO. Lead with whether GPTBot /
-ClaudeBot / PerplexityBot / Google-Extended are blocked, because that
-is the highest-leverage / cheapest-to-fix item and is invisible from
-the storefront.]
 ```
 
 ## ACTION-PLAN.md Structure

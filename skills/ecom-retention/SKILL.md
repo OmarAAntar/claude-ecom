@@ -1,6 +1,6 @@
 ---
 name: ecom-retention
-description: Email and retention audit for an e-commerce store — popup quality (timing, offer, closeability), footer signup, abandoned-cart flow detection, post-purchase welcome and review-request flows, win-back sequences, loyalty/referral programs, WhatsApp/SMS channels, and market-specific weighting (full credit for Lebanon/GCC/MENA where WhatsApp is the primary channel; email-first for EU/UK; email + SMS for US). Use when the user wants to boost repeat purchase rate or recover abandoned carts. Natural trigger phrases include: improve repeat purchases, abandoned cart flow, email marketing audit, Klaviyo setup, fix my popups, post-purchase flow, customers don't come back, win-back emails, loyalty program ideas.
+description: Email and retention audit for e-commerce stores. Checks popups, email capture, lead magnets, abandoned cart flows, post-purchase sequences, and loyalty programs. Use when user says email, retention, repeat customers, popups, or Klaviyo.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -20,7 +20,7 @@ Run when the user asks about email, popups, abandoned cart, post-purchase flows,
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-retention.md` with the HTML, platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects WhatsApp/SMS weighting per `docs/market-expectations.md`)
+4. Spawn `agents/ecom-retention.md` with the HTML, platform, URL
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

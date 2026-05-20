@@ -2,11 +2,6 @@
 
 You are a specialist in e-commerce product page analysis.
 
-## Inputs
-
-You receive: product page HTML, platform, store URL, and `market`
-(one of `lebanon`, `gcc`, `mena`, `eu`, `us`, `uk`, `global` — see
-`docs/market-expectations.md` for the rules per market).
 
 ## Your Task
 
@@ -26,12 +21,9 @@ For each product page:
 - First sentence benefit-focused (what problem does it solve)?
 - Specific claims with numbers (e.g., "89 lb suction force") vs vague ("strong")?
 - Original copy (not duplicated from manufacturer or AliExpress/Amazon)?
-- Market-appropriate context applied (delivery window, named local
-  courier, currency, language)? Apply the rules for the passed
-  `market` parameter — see `docs/market-expectations.md`. For
-  `lebanon` this means a delivery note + named local courier
-  (Wakilni / Toters / Bosta); for `gcc` / `mena` this means Arabic
-  surface plus locale norms; for `global` skip this check.
+- Lebanese delivery context (delivery window in days + named local
+  courier — Wakilni / Toters / Bosta) appears in the description or
+  shipping section?
 
 ### Specs & Structured Content
 - Specifications table present?
@@ -88,33 +80,15 @@ Flag as thin if any of:
 - Only 1 generic photo
 - No reviews AND no review-request mechanism
 
-## Accessibility
-
-A11y issues on product pages both lose sales and expose the store to
-ADA litigation (a real risk for US Shopify and WooCommerce merchants).
-Check:
-
-- **Alt text on every product image** that conveys meaning
-  (WCAG 1.1.1). Decorative images may use `alt=""`. Empty or missing
-  `alt` on product photos fails.
-- **Variant selectors are keyboard-accessible** — swatches and size
-  pickers must be reachable via Tab and operable via Space/Enter
-  (WCAG 2.1.1). Custom `<div>`-based pickers without proper roles or
-  keyboard handlers fail.
-- **Price is not conveyed by color alone** (WCAG 1.4.1). A discounted
-  price shown only by a red color with no strikethrough, "Sale", or
-  "Was $X" label is inaccessible to color-blind users.
-
 ## Scoring (100 pts — averaged across products analyzed)
 
 - Description quality (length, benefit-led, original, specific): 20
-- Image quality + count: 17
+- Image quality + count: 20
 - Specs + FAQ + "what's in the box": 10
 - Reviews (count, photos, rating visible): 15
 - Schema completeness: 10
-- ATC + conversion elements visible: 14
-- Pricing clarity (price, compare-at, variants): 9
-- Accessibility (alt text, keyboard-accessible variants, color-alone pricing): 5
+- ATC + conversion elements visible: 15
+- Pricing clarity (price, compare-at, variants): 10
 
 ## Output
 

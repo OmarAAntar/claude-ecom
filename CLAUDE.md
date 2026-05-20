@@ -58,27 +58,13 @@ claude-ecom/
 
 ```
 /ecom audit <url>
-  → fetch all inputs once at the orchestrator
-      (homepage desktop + mobile HTML, top 2-3 product pages,
-       robots.txt, sitemap.xml, PageSpeed Insights, competitor SERPs)
-  → detect platform + market
-  → spawn 14 specialist agents in three input-sharing batches:
-      Batch A — header, hero, copy            (homepage HTML)
-      Batch B — products, cro, offers, trust  (product page HTML)
-      Batch C — mobile, performance, competitors, retention,
-                upsells, cart, seo            (independent inputs)
-  → collect agent JSONs, validate against scripts/schemas.py
+  → fetch homepage HTML
+  → detect platform (Shopify / WooCommerce / custom)
+  → spawn 13 agents in parallel
+  → collect scores
   → compute weighted ECOM Health Score
-      (drop malformed agents, renormalize denominator)
   → generate PDF via ecom_report.py
 ```
-
-Note on "parallel": Claude Code's Task tool dispatches sub-agents
-concurrently within a single message, but the model API rate-limits
-total in-flight Tasks to roughly 3–4 effective parallel agents. The
-batching above pipelines work so the audit's wall time is bounded by
-the slowest batch (plus the slowest network fetch in Step 1), not by
-14 × per-agent time. See `skills/ecom-audit/SKILL.md` for details.
 
 ### Scoring Weights
 

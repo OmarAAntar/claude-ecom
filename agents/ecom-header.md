@@ -18,12 +18,6 @@ Does **NOT** own:
 
 When you find a header issue that's purely a mobile failure mode, note it but do not deduct — defer to ecom-mobile.
 
-## Inputs
-
-You receive: HTML, store URL, and `market`. Market affects which
-header trust strip you expect (e.g. WhatsApp number for `lebanon` /
-`gcc` / `mena`, "Free returns" for `us` / `uk`). Logo / nav / cart /
-search checks are market-agnostic. See `docs/market-expectations.md`.
 
 ## Your Task
 
@@ -83,9 +77,6 @@ Return JSON:
   "medium": [],
   "low": [],
   "quick_wins": [],
-  "out_of_scope_observations": [],
   "notes": ""
 }
 ```
-
-Use `out_of_scope_observations` to flag mobile tap-target or hero/product-page CTA issues so the orchestrator can route them.

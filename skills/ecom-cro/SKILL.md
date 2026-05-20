@@ -1,6 +1,6 @@
 ---
 name: ecom-cro
-description: Conversion rate optimization audit for an e-commerce store — analyzes product page, cart, and checkout CTAs, form friction, exit intent, micro-conversions, accessibility on conversion elements (contrast, focus states, accessible names), and the purchase barriers that stop visitors from buying. Use when the user wants to know why traffic isn't converting, why people are abandoning the cart, or where the checkout friction is hiding. Natural trigger phrases include: CRO audit, why aren't people buying, fix my conversion rate, cart abandonment, checkout abandonment, my conversion is low, lots of traffic no sales, checkout is broken, why are people leaving the cart, conversion barriers, find the friction.
+description: Conversion Rate Optimization audit for e-commerce stores. Analyzes checkout flow, CTAs, form friction, exit intent, and purchase barriers. Use when user says CRO, conversion, checkout issues, or why aren't people buying.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -29,7 +29,7 @@ Does **NOT** cover:
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch desktop + mobile HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-cro.md` with the fetched HTML, detected platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; rules in `docs/market-expectations.md`)
+4. Spawn `agents/ecom-cro.md` with the fetched HTML, detected platform, URL
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

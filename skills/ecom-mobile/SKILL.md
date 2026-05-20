@@ -1,6 +1,6 @@
 ---
 name: ecom-mobile
-description: Mobile experience audit for an e-commerce store at the 390px iPhone-14 viewport — tap-target sizing and spacing, sticky ATC presence, 16px-min body font (to prevent iOS auto-zoom), no horizontal scroll, correct mobile keyboard input types on checkout forms, thumb-zone placement, and mobile-specific accessibility (WCAG 2.5.5 target size, viewport zoom not disabled, form labels). Use when the user knows most traffic is mobile but the conversion gap between mobile and desktop is huge. Natural trigger phrases include: fix my mobile, mobile conversion is bad, phone experience, mobile UX audit, tap targets, sticky ATC, my store on phones, mobile checkout issues, iPhone view, mobile-first audit.
+description: Mobile experience audit for e-commerce stores. Checks 390px viewport rendering, tap targets, thumb zones, mobile CRO, and mobile-specific trust signals. Use when user says mobile, phone experience, or mobile conversion.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -30,7 +30,7 @@ When a CTA already audited elsewhere also has a mobile-specific problem (e.g., a
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML with the iPhone 14 UA: `Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-mobile.md` with the mobile HTML, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; rules in `docs/market-expectations.md`)
+4. Spawn `agents/ecom-mobile.md` with the mobile HTML, URL
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

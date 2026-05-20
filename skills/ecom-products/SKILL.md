@@ -1,6 +1,6 @@
 ---
 name: ecom-products
-description: Product page audit for an e-commerce store — analyzes description quality and length, image count and lifestyle/studio mix, specifications, variants, reviews, Product schema, thin-content flags, and product-page accessibility (alt text, keyboard-accessible variants, price not conveyed by color alone). Use when the user wants to know why a specific product page isn't converting, whether their listings are thin, or whether their schema is correct. Natural trigger phrases include: fix my product pages, improve my listings, product descriptions audit, my product page isn't converting, are my images good enough, thin content check, product schema check, are my listings too short.
+description: Product page audit for e-commerce stores. Analyzes descriptions, images, specifications, variants, reviews, schema markup, and content depth. Use when user says product pages, product descriptions, product images, or fix my listings.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -22,7 +22,7 @@ Run when the user asks about product pages, descriptions, images, specs, variant
 3. Identify product page URLs from the HTML (links to `/products/*`, `/product/*`, etc.)
 4. Fetch the top 3 product pages
 5. Detect platform (see `skills/ecom/SKILL.md` routing table)
-6. Spawn `agents/ecom-products.md` with the product page HTML, platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects the market-context check per `docs/market-expectations.md`)
+6. Spawn `agents/ecom-products.md` with the product page HTML, platform, URL
 7. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

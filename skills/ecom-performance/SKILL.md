@@ -1,6 +1,6 @@
 ---
 name: ecom-performance
-description: Performance audit for an e-commerce store using live PageSpeed Insights data — Core Web Vitals (LCP, INP, CLS, FCP, TTFB), image optimization (WebP/AVIF, preload, fetchpriority, explicit dimensions), render-blocking scripts, Shopify-app bloat, font-display swap, and geographic TTFB considerations for distant CDN PoPs. Use when the user thinks the store feels slow, is bouncing on mobile, or wants the CWV numbers for SEO. Natural trigger phrases include: my site is slow, page speed, Core Web Vitals, LCP, INP, CLS, fix my speed, why is my store slow, mobile speed issues, Lighthouse score, PageSpeed.
+description: E-commerce performance audit. Checks Core Web Vitals (LCP, INP, CLS), page speed, image optimization, app bloat, and CDN usage. Uses PageSpeed Insights API for live data. Use when user says slow site, page speed, Core Web Vitals, or performance.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -21,7 +21,7 @@ Run when the user asks about page speed, Core Web Vitals, LCP/INP/CLS, app bloat
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Run `scripts/pagespeed.py <url>` to get live CrUX + Lighthouse data
 4. Detect platform (see `skills/ecom/SKILL.md` routing table)
-5. Spawn `agents/ecom-performance.md` with the HTML, PageSpeed JSON, platform, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects the geographic-TTFB note per `docs/market-expectations.md`)
+5. Spawn `agents/ecom-performance.md` with the HTML, PageSpeed JSON, platform, URL
 6. Format the agent's JSON output using the user-facing template below
 
 ## Data Sources

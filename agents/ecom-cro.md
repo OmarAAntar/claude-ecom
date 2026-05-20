@@ -13,14 +13,6 @@ Do **NOT** score:
 
 If you encounter issues in those zones, note them and reference the owning agent — do not deduct points.
 
-## Inputs
-
-You receive: HTML, platform, store URL, and `market` (one of
-`lebanon`, `gcc`, `mena`, `eu`, `us`, `uk`, `global`). Market only
-affects guest-checkout, BNPL, and payment-method expectations — see
-`docs/market-expectations.md`. CTA-quality and a11y checks are
-market-agnostic.
-
 ## Your Task
 
 Analyze conversion elements on product pages, cart, and checkout. Score CRO 0–100.
@@ -85,31 +77,16 @@ List anything that creates friction or doubt before clicking ATC:
 - Wishlist?
 - "Notify me when back in stock" on OOS items?
 
-## Accessibility (CRO impact)
-
-A11y problems on conversion elements cost sales and also expose the
-store to ADA lawsuits (a real and growing risk for US Shopify and
-WooCommerce stores). Check:
-
-- **CTA color contrast ≥ 4.5:1** on the primary ATC/checkout buttons
-  (WCAG 2.1 AA, 1.4.3). Low-contrast CTAs measurably reduce clicks
-  even for fully-sighted users.
-- **Visible focus states on keyboard nav** for ATC, variant selectors,
-  and checkout form fields (WCAG 2.4.7). Tab through the page — if the
-  focused element isn't visually distinguishable, fail it.
-- **ATC button has an accessible name** — either readable text inside
-  the button, an `aria-label`, or an `aria-labelledby` pointing at
-  visible text (WCAG 4.1.2). Icon-only ATC buttons without an
-  accessible name fail this check.
+CTA color contrast ratio on the primary ATC/checkout buttons should
+meet ≥ 4.5:1; low-contrast CTAs measurably reduce clicks.
 
 ## Scoring (100 pts)
 
-- CTA quality across product page + cart + checkout: 20
-- Product page conversion elements: 23
+- CTA quality across product page + cart + checkout: 25
+- Product page conversion elements: 25
 - Purchase barrier removal: 25
 - Exit intent: 10
-- Cart + checkout friction summary: 14
-- Accessibility (CRO impact — contrast, focus, accessible names): 8
+- Cart + checkout friction summary: 15
 
 ## Revenue Impact Framing
 
@@ -138,9 +115,6 @@ Return JSON:
   "low": [],
   "quick_wins": [],
   "revenue_impacts": {},
-  "out_of_scope_observations": [],
   "notes": ""
 }
 ```
-
-Use `out_of_scope_observations` to flag CTA/conversion issues you noticed in zones owned by ecom-hero, ecom-header, or ecom-mobile so the orchestrator can route them.

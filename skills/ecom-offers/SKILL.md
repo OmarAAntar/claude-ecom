@@ -1,6 +1,6 @@
 ---
 name: ecom-offers
-description: Pricing and offer-strategy audit for an e-commerce store — price anchoring (crossed-out compare-at), psychological pricing (.99 / .95 endings), free-shipping threshold prominence, bundle types (volume / complementary / gift), the full upsell stack (pre-ATC, in-cart, pre-checkout bump, post-purchase 1-click), legitimate vs fake urgency signals, BNPL, loyalty/referral, and a current-vs-potential AOV estimate. Use when the user wants to raise AOV, add bundles, or fix flat promotions. Natural trigger phrases include: increase average order value, raise AOV, bundle ideas, upsell strategy, pricing audit, my offers are flat, free shipping threshold, fake urgency check, set up bundles, AOV is too low.
+description: Pricing and offer strategy audit for e-commerce stores. Analyzes price anchoring, bundles, upsells, promotions, free shipping thresholds, and psychological pricing. Use when user says pricing, offers, bundles, promotions, or how to increase average order value.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -20,7 +20,7 @@ Run when the user asks about pricing, bundles, promotions, AOV, upsells, free sh
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-offers.md` with the fetched HTML, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; affects VAT/currency rules per `docs/market-expectations.md`)
+4. Spawn `agents/ecom-offers.md` with the fetched HTML, URL
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

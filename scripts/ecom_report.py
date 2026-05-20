@@ -6,8 +6,7 @@ Usage:
     python ecom_report.py \
         --report ECOM-AUDIT-REPORT.md \
         --action-plan ACTION-PLAN.md \
-        [--scores '{"overall": 41, "categories": {...}}'  \
-         | --agent-outputs path/to/agent_outputs.json] \
+        --scores '{"overall": 41, "categories": {...}}' \
         --url https://example.com \
         --platform shopify \
         --output ecom-report.pdf \
@@ -15,36 +14,7 @@ Usage:
         [--brand-color "#1d4ed8"] \
         [--logo path/to/logo.png or https://example.com/logo.png]
 
-Score sources
--------------
-Exactly one of ``--scores`` or ``--agent-outputs`` must be supplied:
-
-- ``--scores`` is the pre-aggregated form: a JSON object with
-  ``overall`` and ``categories`` keys, produced upstream by the
-  ``ecom-report`` orchestrator agent. Used as-is.
-
-- ``--agent-outputs`` is the raw form: a JSON file containing either
-  a list of agent payloads, or an object keyed by agent name. Each
-  payload is validated against ``scripts.schemas.AgentOutput``.
-
-Validation behavior (``--agent-outputs`` path)
----------------------------------------------
-Every incoming agent JSON is validated before aggregation. If an
-agent's payload is malformed — e.g. ``score: "N/A"``, ``score: null``,
-``score: 150``, missing required fields, or non-list ``critical`` /
-``high`` — its payload is rejected. The script:
-
-1. Logs the offending agent name and the specific field error to
-   stderr.
-2. **Excludes the rejected agent from aggregation entirely**, so the
-   weighted-average denominator drops by that category's share and
-   the remaining valid agents are renormalized over the remaining
-   weight. This prevents a single malformed agent from silently
-   producing a "0 score" pull on the overall.
-3. Exits 0 with a partial report when at least one valid agent
-   contributed, exits 2 when every agent failed validation.
-
-Dependencies: weasyprint, matplotlib, pillow, requests, pydantic
+Dependencies: weasyprint, matplotlib, pillow, requests
 """
 
 from __future__ import annotations
@@ -64,15 +34,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-
-# Schema + aggregation helpers live in scripts/schemas.py
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from schemas import (  # noqa: E402
-    AgentOutput,
-    aggregate,
-    discoverability_score,
-    validate_agent_payload,
-)
 
 
 def _score_color(score: int) -> str:
@@ -620,45 +581,11 @@ def generate_pdf(html: str, output_path: str) -> None:
     print(f"PDF report saved to: {output_path}")
 
 
-def _load_and_validate_agent_outputs(path: str) -> tuple[list[AgentOutput], list[str]]:
-    """Load agent outputs from a JSON file. Returns (valid_outputs, error_log)."""
-    raw = json.loads(Path(path).read_text(encoding="utf-8"))
-    if isinstance(raw, dict):
-        # Allow keyed-by-agent-name form: {"ecom-cro": {...}, ...}
-        items = list(raw.values())
-    elif isinstance(raw, list):
-        items = raw
-    else:
-        raise ValueError(
-            f"--agent-outputs JSON must be a list or object, got {type(raw).__name__}"
-        )
-
-    valid: list[AgentOutput] = []
-    errors: list[str] = []
-    for item in items:
-        output, err = validate_agent_payload(item)
-        if output is not None:
-            valid.append(output)
-        else:
-            errors.append(err or "unknown validation error")
-    return valid, errors
-
-
 def main():
     parser = argparse.ArgumentParser(description="Generate ECOM audit PDF report")
     parser.add_argument("--report", required=True, help="Path to ECOM-AUDIT-REPORT.md")
     parser.add_argument("--action-plan", required=True, help="Path to ACTION-PLAN.md")
-    score_group = parser.add_mutually_exclusive_group(required=True)
-    score_group.add_argument(
-        "--scores",
-        help='Pre-aggregated JSON scores: {"overall": 41, "categories": {...}}',
-    )
-    score_group.add_argument(
-        "--agent-outputs",
-        help="Path to a JSON file containing raw agent payloads (list or "
-             "{agent_name: payload} object). Each payload is validated; "
-             "invalid agents are dropped from aggregation with a stderr log.",
-    )
+    parser.add_argument("--scores", required=True, help='JSON scores: {"overall": 41, "categories": {...}}')
     parser.add_argument("--url", required=True, help="Store URL")
     parser.add_argument("--platform", default="shopify", help="Platform name")
     parser.add_argument("--output", default="ecom-report.pdf", help="Output PDF path")
@@ -670,38 +597,7 @@ def main():
 
     report_md = Path(args.report).read_text(encoding="utf-8")
     action_plan_md = Path(args.action_plan).read_text(encoding="utf-8")
-
-    if args.agent_outputs:
-        valid_outputs, errors = _load_and_validate_agent_outputs(args.agent_outputs)
-        for err in errors:
-            print(f"[ecom_report] dropping malformed agent output: {err}", file=sys.stderr)
-        if not valid_outputs:
-            print(
-                "[ecom_report] every agent payload failed validation; cannot aggregate.",
-                file=sys.stderr,
-            )
-            sys.exit(2)
-        agg = aggregate(valid_outputs)
-        scores = {
-            "overall": agg["overall"],
-            "categories": agg["categories"],
-        }
-        disc = discoverability_score(valid_outputs)
-        if disc is not None:
-            scores["discoverability"] = disc
-        if agg["skipped_categories"]:
-            print(
-                "[ecom_report] excluded categories (no valid agent output): "
-                + ", ".join(agg["skipped_categories"]),
-                file=sys.stderr,
-            )
-        print(
-            f"[ecom_report] aggregated {len(valid_outputs)} valid agent(s); "
-            f"denominator weight used = {agg['weight_used']}",
-            file=sys.stderr,
-        )
-    else:
-        scores = json.loads(args.scores)
+    scores = json.loads(args.scores)
     audit_date = date.today().strftime("%B %d, %Y")
 
     logo_b64 = _load_logo(args.logo) if args.logo else None

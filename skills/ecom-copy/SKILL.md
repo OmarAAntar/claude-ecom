@@ -1,6 +1,6 @@
 ---
 name: ecom-copy
-description: Copy and messaging audit for an e-commerce store — H1 and value-prop clarity (the 5-second test), CTA specificity grading, product-description benefit-led vs spec-led check, AI-content red-flag detection (unique / elevate / seamlessly / stunning / unparalleled / embark / delve), unsubstantiated-superlative flags ("#1 in market"), objection handling, and readability targets. Use when the user wants ready-to-paste rewrites for headlines, CTAs, and product descriptions. Natural trigger phrases include: rewrite my headlines, fix my copy, my product descriptions sound generic, my hero is weak, sounds AI-written, my CTAs are vague, my value proposition is unclear, ad copy audit, messaging review.
+description: Copy and messaging audit for e-commerce stores. Analyzes headlines, CTAs, product descriptions, value propositions, tone of voice, and persuasion elements. Use when user says copy, messaging, headlines, descriptions, or writing.
 user-invokable: true
 argument-hint: <url>
 version: 1.0.0
@@ -20,7 +20,7 @@ Run when the user asks about copy quality, headlines, product descriptions, valu
 1. Validate the URL via `scripts/fetch_page.py validate_url()`
 2. Fetch HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md` routing table)
-4. Spawn `agents/ecom-copy.md` with the fetched HTML, URL, and detected `market` (auto-detected by `scripts/fetch_page.py`; rules in `docs/market-expectations.md`)
+4. Spawn `agents/ecom-copy.md` with the fetched HTML, URL
 5. Format the agent's JSON output using the user-facing template below
 
 ## Scoring Rubric & Check Criteria

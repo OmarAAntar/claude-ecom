@@ -1,6 +1,6 @@
 ---
 name: ecom
-description: Audit an e-commerce store and score it 0-100 across conversion, product pages, offers, trust, mobile, copy, retention, performance, and competitors. Generates a PDF action plan with a 30-day sprint. Use when the user asks about store conversion, why their store isn't converting, cart abandonment, checkout problems, mobile UX, competitor analysis, or wants a Shopify/WooCommerce/BigCommerce store reviewed. Natural trigger phrases include: audit my store, review my shop, CRO audit, why isn't my store converting, my conversion is low, check my Shopify, fix my checkout, mobile conversion issues, look at my ecommerce site, score my store, why are people leaving without buying.
+description: E-commerce store audit suite. Scores stores /100 across CRO, product pages, offers, trust, mobile, copy, and competitors. Generates a PDF action plan. TRIGGER when user says audit my store, ecom audit, check my website, review my shop, CRO audit, or any e-commerce store analysis request.
 user-invokable: true
 argument-hint: "[command] [url]"
 version: 1.0.0
@@ -17,7 +17,6 @@ You are the Claude ECOM orchestrator. Route user commands to the appropriate sub
 |---|---|---|
 | `/ecom audit <url>` | ecom-audit | Full store audit — all categories, PDF report |
 | `/ecom quick <url>` | ecom-quick | Fast triage — 3 agents (hero, CRO, trust), markdown only, < 2 min |
-| `/ecom recheck <url> <previous-report-path>` | ecom-recheck | Re-runs full audit and diffs scores + issues against a previous ECOM-AUDIT-REPORT.md |
 | `/ecom cro <url>` | ecom-cro | CRO deep dive — checkout, CTAs, friction |
 | `/ecom products <url>` | ecom-products | Product page audit — copy, images, schema |
 | `/ecom competitors <url>` | ecom-competitors | Competitor scan — pricing, offers, gaps |
@@ -27,18 +26,15 @@ You are the Claude ECOM orchestrator. Route user commands to the appropriate sub
 | `/ecom copy <url>` | ecom-copy | Copy & messaging audit |
 | `/ecom mobile <url>` | ecom-mobile | Mobile experience check |
 | `/ecom retention <url>` | ecom-retention | Email, popups, post-purchase flows |
-| `/ecom seo <url>` | ecom-seo | SEO + AI-search discoverability (separate Discoverability Score) |
 
 ## Routing Logic
 
 1. Parse the first argument as the command keyword
 2. Parse the second argument as the URL
-3. For `recheck`, parse the third argument as the previous report path
-4. If no command given, default to `audit`
-5. If no URL given, ask the user for the store URL
-6. If `recheck` is invoked without a report path, ask the user for it
-7. Delegate to the matching sub-skill using the Agent tool
-8. Do NOT perform the analysis yourself — always delegate
+3. If no command given, default to `audit`
+4. If no URL given, ask the user for the store URL
+5. Delegate to the matching sub-skill using the Agent tool
+6. Do NOT perform the analysis yourself — always delegate
 
 ## Platform Detection (used by all sub-skills)
 
@@ -49,22 +45,6 @@ Detect platform from HTML signals before auditing:
 - `__NEXT_DATA__` or `_buildManifest` → **Next.js custom**
 - `window.Squarespace` → **Squarespace**
 - Unknown → **Custom**
-
-## Market Detection (used by all sub-skills)
-
-`scripts/fetch_page.py` auto-detects the target market from the URL
-TLD (with HTML `lang` as fallback) and returns one of: `lebanon`,
-`gcc`, `mena`, `eu`, `us`, `uk`, `global`. Users can override with
-`--market <name>`.
-
-Always pass the resolved market through to spawned agents. The full
-set of locale-conditional rules lives in
-`docs/market-expectations.md`. Sub-skills and agents reference that
-file rather than hardcoding rules.
-
-Surface the detected market to the user at the start of an audit so
-they can correct an obvious mis-detection (e.g. a Lebanese DTC brand
-on a .com domain that resolves to `us` by default).
 
 ## ECOM Health Score Weights
 
