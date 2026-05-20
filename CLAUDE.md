@@ -2,7 +2,10 @@
 
 ## What This Is
 
-Claude ECOM is a Claude Code skill that audits e-commerce stores and generates a scored PDF report with prioritized fixes. It covers conversion rate optimization, product presentation, pricing strategy, trust signals, competitor positioning, mobile experience, and more.
+Claude ECOM is a Claude Code skill that audits e-commerce stores and
+generates a scored PDF action plan **in under 5 minutes**. It targets
+the Lebanese market by default (COD, WhatsApp, Whish Pay, USD/LBP,
+Wakilni/Toters/Bosta).
 
 ## Repository Structure
 
@@ -11,36 +14,25 @@ claude-ecom/
 ├── .claude-plugin/
 │   └── plugin.json           # Plugin manifest
 ├── skills/
-│   ├── ecom/SKILL.md         # Main orchestrator + command router
-│   ├── ecom-audit/SKILL.md   # Full store audit (spawns all agents)
-│   ├── ecom-cro/SKILL.md     # Conversion rate optimization
-│   ├── ecom-products/SKILL.md # Product page analysis
-│   ├── ecom-competitors/SKILL.md # Competitor scan
-│   ├── ecom-performance/SKILL.md # Speed & Core Web Vitals
-│   ├── ecom-trust/SKILL.md   # Trust & social proof
-│   ├── ecom-offers/SKILL.md  # Pricing, bundles, upsells
-│   ├── ecom-copy/SKILL.md    # Copy & messaging audit
-│   ├── ecom-mobile/SKILL.md  # Mobile experience
-│   └── ecom-retention/SKILL.md # Email & retention
-├── agents/                   # Sub-agents for parallel execution
-│   ├── ecom-header.md
-│   ├── ecom-hero.md
-│   ├── ecom-products.md
-│   ├── ecom-cart.md
-│   ├── ecom-cro.md
-│   ├── ecom-offers.md
-│   ├── ecom-upsells.md
-│   ├── ecom-trust.md
-│   ├── ecom-mobile.md
-│   ├── ecom-performance.md
-│   ├── ecom-copy.md
-│   ├── ecom-competitors.md
-│   ├── ecom-retention.md
-│   └── ecom-report.md
+│   ├── ecom/SKILL.md         # Orchestrator + command router
+│   ├── ecom-audit/SKILL.md   # Full store audit (spawns the 5 agents)
+│   ├── ecom-quick/SKILL.md   # 3-agent triage, under 2 min
+│   ├── ecom-products/SKILL.md   # Standalone products deep-dive
+│   ├── ecom-performance/SKILL.md # Standalone perf + CWV
+│   └── ecom-competitors/SKILL.md # Opt-in competitor scan
+├── agents/
+│   ├── ecom-storefront.md    # Header + hero + copy
+│   ├── ecom-products.md      # Product page checks
+│   ├── ecom-conversion.md    # CRO + cart + mobile friction
+│   ├── ecom-trust-offers.md  # Trust + offers + upsells
+│   ├── ecom-performance.md   # CWV + perf
+│   ├── ecom-competitors.md   # Opt-in
+│   └── ecom-report.md        # Aggregator + PDF trigger
 ├── scripts/
 │   ├── fetch_page.py         # HTML fetcher with UA spoofing
 │   ├── pagespeed.py          # PageSpeed Insights API wrapper
 │   ├── competitor_scan.py    # Web search competitor analysis
+│   ├── extract_brand.py      # Logo / color extractor for the PDF
 │   └── ecom_report.py        # WeasyPrint PDF report generator
 ├── requirements.txt
 └── pyproject.toml
@@ -50,35 +42,38 @@ claude-ecom/
 
 ### 3-Layer Model
 
-1. **Orchestration**: `skills/ecom/SKILL.md` routes commands to sub-skills
-2. **Sub-skills**: Each domain area has its own SKILL.md with specialized logic
-3. **Agents**: Parallel sub-agents do the actual page fetching, analysis, and scoring
+1. **Orchestration**: `skills/ecom/SKILL.md` routes commands.
+2. **Sub-skills**: Each command has its own SKILL.md.
+3. **Agents**: 5 sub-agents do the analysis in parallel.
 
 ### Full Audit Flow
 
 ```
 /ecom audit <url>
-  → fetch homepage HTML
+  → fetch homepage + mobile HTML + 2-3 product pages
   → detect platform (Shopify / WooCommerce / custom)
-  → spawn 13 agents in parallel
+  → spawn 5 agents in parallel:
+      ecom-storefront, ecom-products, ecom-conversion,
+      ecom-trust-offers, ecom-performance
   → collect scores
   → compute weighted ECOM Health Score
   → generate PDF via ecom_report.py
 ```
 
+Competitors are **not** spawned by default — they're an opt-in
+`/ecom competitors <url>` command.
+
 ### Scoring Weights
 
 | Category | Weight |
 |---|---|
-| Product Presentation | 18% |
-| Conversion Rate Optimization | 18% |
-| Offer & Pricing Strategy | 13% |
-| Trust & Social Proof | 12% |
-| Mobile Experience | 10% |
-| Performance (CWV) | 10% |
-| First Impression (Header + Hero) | 8% |
-| Copy & Messaging | 6% |
-| Retention & Email | 5% |
+| Conversion | 30% |
+| Products | 25% |
+| Trust & Offers | 18% |
+| Storefront | 15% |
+| Performance (CWV) | 12% |
+
+Weights sum to 100.
 
 ### Priority Tiers
 
@@ -93,7 +88,7 @@ claude-ecom/
 - SKILL.md files stay under 500 lines / 5000 tokens
 - Agents are invoked via the Agent tool, never Bash
 - Python scripts must include docstrings + argparse CLI + JSON output
-- All URLs validated through `scripts/fetch_page.py validate_url()` (SSRF protection)
+- All URLs validated through `scripts/fetch_page.py validate_url()`
 - Revenue-impact framing: every issue states what conversion % it costs
 
 ## Output Files
@@ -101,7 +96,7 @@ claude-ecom/
 Every full audit produces:
 - `ECOM-AUDIT-REPORT.md` — Full findings markdown
 - `ACTION-PLAN.md` — Prioritized checklist
-- `ecom-report.pdf` — Professional A4 PDF with charts and score cards
+- `ecom-report.pdf` — Professional A4 PDF
 
 ## Install
 
@@ -113,14 +108,9 @@ bash install.sh   # macOS/Linux
 ## Usage
 
 ```
-/ecom audit <url>             # Full store audit
-/ecom cro <url>               # CRO-only deep dive
-/ecom products <url>          # Product page analysis
-/ecom competitors <url>       # Competitor scan
-/ecom copy <url>              # Copy & messaging audit
-/ecom mobile <url>            # Mobile experience check
-/ecom offers <url>            # Pricing & offer strategy
-/ecom trust <url>             # Trust & social proof audit
-/ecom retention <url>         # Email & retention audit
-/ecom performance <url>       # Speed & Core Web Vitals
+/ecom audit <url>             # Full audit + PDF (< 5 min)
+/ecom quick <url>             # 3-agent triage (< 2 min)
+/ecom products <url>          # Standalone products
+/ecom performance <url>       # Standalone CWV
+/ecom competitors <url>       # Opt-in competitor scan
 ```

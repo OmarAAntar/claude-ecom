@@ -1,6 +1,6 @@
 # Claude ECOM
 
-> E-commerce store audit suite for [Claude Code](https://claude.ai/code). Scores your store /100 across CRO, product pages, offers, trust, mobile, copy, and competitors. Generates a professional PDF action plan.
+> E-commerce store audit suite for [Claude Code](https://claude.ai/code). **Audit any Shopify, WooCommerce, or custom store in under 5 minutes — get a scored PDF action plan back.**
 
 Inspired by [claude-seo](https://github.com/AgriciDaniel/claude-seo).
 
@@ -10,33 +10,21 @@ Inspired by [claude-seo](https://github.com/AgriciDaniel/claude-seo).
 
 Drop a store URL, get back a scored audit report with:
 
-- **ECOM Health Score** (0–100) across 9 weighted categories
-- **Competitor scan** — finds 3–5 direct competitors, builds a comparison matrix
-- **CRO analysis** — checkout friction, CTA quality, purchase barriers
-- **Product page audit** — content depth, image quality, schema, reviews
-- **Offer strategy** — bundles, upsells, pricing psychology, AOV optimization
-- **Trust audit** — reviews, policies, contact, badges, market-specific signals
-- **Mobile experience** — 390px viewport, tap targets, sticky ATC, keyboard types
-- **Copy audit** — with ready-to-use rewrites for every weak headline and CTA
-- **Performance** — Core Web Vitals (LCP, INP, CLS) via PageSpeed Insights
-- **Retention** — email capture, abandoned cart, post-purchase flows
-- **Accessibility** — folded into CRO, product, and mobile scoring: CTA contrast, focus states, keyboard-accessible variants, alt text, tap targets, viewport zoom, form labels. A11y failures both cost conversion **and** expose US stores to ADA lawsuits (a growing risk for Shopify and WooCommerce merchants).
-- **PDF report** — professional A4 with charts, pass/fail tables, and a 30-day sprint plan
+- **ECOM Health Score** (0–100) across 5 weighted categories
+- **CRITICAL / HIGH / MEDIUM / LOW** issue lists with ready-to-paste fixes
+- **PDF action plan** with a 30-day sprint — professional A4 with charts and per-category score cards
+- **5 minutes end-to-end**, not 30+
 
 ## Sample Output
 
 ```
-ECOM Health Score: 41 / 100 — CRITICAL
+ECOM Health Score: 51 / 100 — FAIR
 
-First Impression:    38/100
-Product Pages:       45/100
-CRO:                 28/100
-Offer Strategy:      35/100
-Trust:               52/100
-Mobile:              30/100
-Copy:                44/100
-Retention:           20/100
-Performance:         38/100
+Conversion:        45/100
+Products:          55/100
+Trust & Offers:    48/100
+Storefront:        58/100
+Performance:       62/100
 ```
 
 ## Install
@@ -60,72 +48,46 @@ cd claude-ecom
 ## Usage
 
 ```
-/ecom audit <url>             # Full store audit + PDF report
-/ecom quick <url>             # Fast triage — 3 agents, markdown only, <2 min
-/ecom cro <url>               # CRO-only deep dive
-/ecom products <url>          # Product page analysis
-/ecom competitors <url>       # Competitor scan
-/ecom copy <url>              # Copy & messaging audit
-/ecom mobile <url>            # Mobile experience check
-/ecom offers <url>            # Pricing & offer strategy
-/ecom trust <url>             # Trust & social proof audit
-/ecom retention <url>         # Email & retention audit
+/ecom audit <url>             # Full store audit + PDF report (under 5 min)
+/ecom quick <url>             # Fast triage — 3 agents, markdown only, under 2 min
+/ecom products <url>          # Product page deep-dive
 /ecom performance <url>       # Speed & Core Web Vitals
+/ecom competitors <url>       # Competitor scan (opt-in; not part of full audit)
 ```
 
 ## Architecture
 
-```
-orchestrator → batched specialist agents → score aggregation → markdown + PDF
-```
+5 specialist agents run in parallel against one round of HTML fetches:
 
-The full audit dispatches **14 specialist agents** organized into
-three batches that share input HTML, so the target store is fetched
-only **once per page per user agent** rather than 14 times. In
-practice Claude Code's Task tool runs ~3–4 sub-agents truly
-concurrently (rate-limited by the model API), so the audit is
-effectively pipelined rather than fully parallel — but the batching
-keeps wall time bounded by the slowest batch plus the slowest fetch,
-not by the sum of all agents. See
-`skills/ecom-audit/SKILL.md` for the batch layout.
-
-| Layer | Files | Role |
+| Agent | File | Weight |
 |---|---|---|
-| Orchestrator | `skills/ecom/SKILL.md` | Routes commands |
-| Full audit | `skills/ecom-audit/SKILL.md` | Fetches once, spawns agents in batches |
-| Sub-skills | `skills/ecom-*/SKILL.md` | Domain-specific entry points (`/ecom cro`, etc.) |
-| Agents | `agents/ecom-*.md` | Specialist analyzers, run concurrently within each batch |
-| Scripts | `scripts/*.py` | Fetch, market detect, PSI, schema validation, PDF |
+| Conversion | `agents/ecom-conversion.md` | 30% |
+| Products | `agents/ecom-products.md` | 25% |
+| Trust & Offers | `agents/ecom-trust-offers.md` | 18% |
+| Storefront | `agents/ecom-storefront.md` | 15% |
+| Performance | `agents/ecom-performance.md` | 12% |
 
-## Scoring Weights
+Weights sum to 100. Competitors is intentionally **not** in the
+default audit — it's the slowest leg (web search across multiple
+domains) and most users don't need it on every run.
 
-| Category | Weight |
-|---|---|
-| Product Presentation | 18% |
-| Conversion Rate Optimization | 18% |
-| Offer & Pricing Strategy | 13% |
-| Trust & Social Proof | 12% |
-| Mobile Experience | 10% |
-| Performance (Core Web Vitals) | 10% |
-| First Impression (Header + Hero) | 8% |
-| Copy & Messaging | 6% |
-| Retention & Email | 5% |
+## Output Files
+
+Every full audit produces:
+- `ECOM-AUDIT-REPORT.md` — Full findings markdown
+- `ACTION-PLAN.md` — Prioritized checklist
+- `ecom-report.pdf` — Professional A4 PDF with charts and score cards
 
 ## Optional: PageSpeed Insights API Key
 
 Without an API key, performance scores use Lighthouse lab data.
-With a key, you get real CrUX field data (actual user measurements).
+With one, they use real CrUX field data. Set
+`PAGESPEED_API_KEY=...` in your environment.
 
-```bash
-export PSI_API_KEY=your_key_here
-```
+## Market Focus
 
-Get a free key at [console.cloud.google.com](https://console.cloud.google.com).
-
-## License
-
-MIT — free to use, fork, and build on.
-
----
-
-*Generated reports include a footer: "Audited by Claude ECOM Audit Suite"*
+Claude ECOM is built for the **Lebanese e-commerce market**. Trust
+signals, payment expectations (COD + WhatsApp + Whish Pay + USD/LBP
+dual currency), and delivery norms (Wakilni / Toters / Bosta) are
+hardcoded for that context. The CRO and performance checks are
+universal and work on any English-language storefront.

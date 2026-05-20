@@ -1,9 +1,9 @@
 ---
 name: ecom-quick
-description: Fast e-commerce triage. Runs only 3 agents (hero, CRO, trust) and returns a top-line score and the top 3 critical issues in under 2 minutes. No PDF. Use when user says quick audit, fast check, triage, top issues, or just looking to spot-check a store before committing to a full audit.
+description: Fast e-commerce triage. Runs only 3 agents (storefront, conversion, trust & offers) and returns a top-line score and the top 3 critical issues in under 2 minutes. No PDF. Use when user says quick audit, fast check, triage, top issues, or just looking to spot-check a store before committing to a full audit.
 user-invokable: true
 argument-hint: <url>
-version: 1.0.0
+version: 2.0.0
 category: ecommerce
 ---
 
@@ -19,22 +19,23 @@ decide whether the store needs a full audit. Not a replacement for
 
 ## What It Covers
 
-Only three agents, chosen because they cover the highest-leverage
-above-the-fold + conversion + trust signals:
+Only three agents, the highest-leverage subset of the full audit:
 
-- `agents/ecom-hero.md` — H1, value prop, hero CTA, hero trust
-- `agents/ecom-cro.md` — product/cart/checkout CTAs and purchase
-  barriers
-- `agents/ecom-trust.md` — reviews, policies, contact, trust signals
+- `agents/ecom-storefront.md` — H1 + value prop, hero CTA,
+  announcement bar, AI-content markers
+- `agents/ecom-conversion.md` — product/cart/checkout CTAs, sticky
+  ATC, guest checkout, exit intent, mobile friction
+- `agents/ecom-trust-offers.md` — reviews, policies, Lebanon trust
+  signals (COD / WhatsApp / Whish), pricing anchoring, upsell stack
 
-Deliberately excluded: header, product page deep-dive, cart deep-dive,
-offers, upsells, mobile, performance, copy, retention, competitors.
-If the quick audit raises red flags, recommend the full audit.
+Deliberately excluded from quick: products deep-dive, performance,
+competitors. If the quick audit raises red flags, recommend the
+full audit.
 
 ## Orchestration
 
 1. Validate URL via `scripts/fetch_page.py validate_url()`
-2. Fetch desktop HTML via `scripts/fetch_page.py`
+2. Fetch desktop + mobile HTML via `scripts/fetch_page.py`
 3. Detect platform (see `skills/ecom/SKILL.md`)
 4. Spawn the three agents in parallel with HTML, platform, and URL
 5. Compute the Quick Score (see below)
@@ -44,19 +45,18 @@ If the quick audit raises red flags, recommend the full audit.
 
 This is **not** the ECOM Health Score. It is a triage signal.
 
-Compute as a re-normalized weighted average of just the three agent
-scores, using the same relative weights from the full rubric:
+Re-normalized weighted average using the full-audit relative weights:
 
 ```
-hero_w  = 8   # First Impression (Header+Hero) — using hero only here
-cro_w   = 18
-trust_w = 12
-total_w = hero_w + cro_w + trust_w  # = 38
+storefront_w   = 15
+conversion_w   = 30
+trust_offers_w = 18
+total_w        = 63
 
 quick_score = round(
-  (hero_score  * hero_w  +
-   cro_score   * cro_w   +
-   trust_score * trust_w)
+  (storefront_score   * storefront_w   +
+   conversion_score   * conversion_w   +
+   trust_offers_score * trust_offers_w)
   / total_w
 )
 ```
@@ -73,12 +73,12 @@ URL:       [url]
 Platform:  [detected platform]
 
 Sub-scores:
-- Hero:  XX/100
-- CRO:   XX/100
-- Trust: XX/100
+- Storefront:    XX/100
+- Conversion:    XX/100
+- Trust & Offers: XX/100
 
 TOP 3 CRITICAL ISSUES:
-1. [issue from any of the three agents]
+1. [issue]
 2. [issue]
 3. [issue]
 
@@ -87,17 +87,15 @@ TOP 3 QUICK WINS:
 2. [fix]
 3. [fix]
 
-Run `/ecom audit <url>` for the full 14-agent analysis with PDF report.
+Run `/ecom audit <url>` for the full 5-agent analysis with PDF report.
 ```
 
-The trailing line is required — do not omit it. It is how users learn
-that quick is a triage tool, not a full audit.
+The trailing line is required — do not omit it.
 
 ## Hard Rules
 
 - No PDF generation. Markdown output only.
-- Target time-to-output: under 2 minutes. Do not call optional helpers
-  (no PageSpeed Insights, no competitor scan, no robots.txt fetch).
+- Target time-to-output: under 2 minutes. Skip PageSpeed Insights and
+  competitor scan entirely.
 - If fewer than 3 CRITICAL issues exist across all three agents,
-  promote HIGH-severity items to fill the slot — and label them
-  "(HIGH)" so the user knows they were promoted.
+  promote HIGH-severity items to fill the slot — label them "(HIGH)".

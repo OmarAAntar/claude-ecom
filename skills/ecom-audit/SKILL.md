@@ -1,13 +1,15 @@
 ---
 name: ecom-audit
-description: Full e-commerce store audit with parallel sub-agent delegation. Fetches store HTML, detects platform, spawns 13 specialist agents, computes weighted ECOM Health Score (0-100), generates PDF report. Use when user says full audit, audit my store, or complete store review.
+description: Full e-commerce store audit. Fetches store HTML, detects platform, spawns 5 specialist agents in parallel, computes a weighted ECOM Health Score (0-100), and generates a PDF action plan in under 5 minutes. Use when user says full audit, audit my store, or complete store review.
 user-invokable: true
 argument-hint: <url>
-version: 1.0.0
+version: 2.0.0
 category: ecommerce
 ---
 
 # Full E-Commerce Store Audit
+
+Target: **under 5 minutes** from URL to PDF.
 
 ## Step 1 — Fetch & Detect
 
@@ -15,63 +17,50 @@ Run `scripts/fetch_page.py <url>` to get:
 - Raw HTML (desktop UA)
 - Raw HTML (mobile UA: iPhone 14)
 - HTTP headers
-- Redirect chain
 - Page load time estimate
 
-Detect platform from HTML (see ecom/SKILL.md routing table).
+From the homepage HTML, identify the top 2–3 product page URLs and
+fetch them. Detect platform (Shopify / WooCommerce / BigCommerce /
+custom — see `skills/ecom/SKILL.md`).
 
-Detect business type:
-- **Dropship** — generic descriptions, AliExpress image patterns, no brand story
-- **DTC Brand** — original branding, founder story, branded packaging mentions
-- **Marketplace** — multiple sellers, varying branding
-- **Service + Products** — hybrid (e.g., a salon selling products)
+## Step 2 — Spawn the 5 Agents in Parallel
 
-## Step 2 — Spawn All Agents in Parallel
+Use the Agent tool in a single message to spawn all 5 simultaneously.
+Pass each agent the relevant HTML, the detected platform, and the
+store URL.
 
-Use the Agent tool to spawn all 13 agents simultaneously. Pass each agent:
-- The fetched HTML
-- The detected platform
-- The store URL
+| Agent | File | Inputs | Analyzes |
+|---|---|---|---|
+| Storefront | `agents/ecom-storefront.md` | Homepage HTML | H1 + value prop, hero CTA, announcement bar, nav, AI-content markers, superlatives |
+| Products | `agents/ecom-products.md` | Top 2–3 product page HTMLs | Description quality, images, schema, reviews, ATC visibility, Lebanese delivery context |
+| Conversion | `agents/ecom-conversion.md` | Product + cart + checkout HTML (desktop + mobile) | ATC, sticky-ATC mobile, tap targets, checkout step count, guest checkout, exit intent |
+| Trust & Offers | `agents/ecom-trust-offers.md` | Homepage + product page HTML | Reviews, policies, Lebanon trust signals (COD / WhatsApp / Whish / dual currency), pricing anchoring, bundles, upsell stack |
+| Performance | `agents/ecom-performance.md` | PageSpeed Insights JSON + homepage HTML | Mobile LCP / INP / CLS, render-blocking scripts, image optimization, Lebanon TTFB note |
 
-| Agent | File | Analyzes |
-|---|---|---|
-| Header | `agents/ecom-header.md` | Logo, nav, announcement bar, cart, search |
-| Hero | `agents/ecom-hero.md` | Value prop, H1, CTA, above-fold content |
-| Products | `agents/ecom-products.md` | Descriptions, images, specs, variants |
-| Cart | `agents/ecom-cart.md` | Cart page UX, upsells, friction |
-| CRO | `agents/ecom-cro.md` | Checkout flow, form friction, CTAs |
-| Offers | `agents/ecom-offers.md` | Pricing, bundles, promotions, anchoring |
-| Upsells | `agents/ecom-upsells.md` | Post-purchase, cross-sells, BOGO |
-| Trust | `agents/ecom-trust.md` | Reviews, badges, guarantees, policies |
-| Mobile | `agents/ecom-mobile.md` | 390px viewport, tap targets, mobile CRO |
-| Performance | `agents/ecom-performance.md` | CWV, LCP, INP, CLS, app bloat |
-| Copy | `agents/ecom-copy.md` | Headlines, descriptions, CTAs, tone |
-| Competitors | `agents/ecom-competitors.md` | 3 competitors, price/offer/trust gaps |
-| Retention | `agents/ecom-retention.md` | Popups, email capture, post-purchase flows |
+**Competitors are opt-in.** Do not spawn `agents/ecom-competitors.md`
+during the default `/ecom audit` flow. Users who want a competitive
+benchmark run `/ecom competitors <url>` separately. This keeps the
+audit under 5 minutes — competitor scans are the slowest leg.
 
 ## Step 3 — Compute ECOM Health Score
 
-Collect scores from all agents. Apply weights:
+Collect scores from the 5 agents. Apply weights:
 
-| Category | Agents | Weight |
+| Category | Agent | Weight |
 |---|---|---|
-| Product Presentation | Products | 18% |
-| Conversion Rate Optimization | CRO + Cart | 18% |
-| Offer & Pricing Strategy | Offers + Upsells | 13% |
-| Trust & Social Proof | Trust | 12% |
-| Mobile Experience | Mobile | 10% |
-| Performance (CWV) | Performance | 10% |
-| First Impression | Header + Hero | 8% |
-| Copy & Messaging | Copy | 6% |
-| Retention & Email | Retention | 5% |
+| Conversion | ecom-conversion | 30% |
+| Products | ecom-products | 25% |
+| Trust & Offers | ecom-trust-offers | 18% |
+| Storefront | ecom-storefront | 15% |
+| Performance (CWV) | ecom-performance | 12% |
 
-Overall = sum of (score × weight).
+Sum = 100. Overall = sum of (score × weight).
 
 ## Step 4 — Identify Critical Issues
 
 Critical issues are anything that:
 - Blocks purchasing (broken cart, no payment icons, no mobile CTA)
-- Destroys trust (no reviews, no return policy visible, no contact method)
+- Destroys trust (no COD, no WhatsApp, no reviews, no return policy visible)
 - Loses visitors before they see a product (hero has no value prop, LCP > 5s mobile)
 - Costs >5% conversion on its own
 
@@ -79,24 +68,15 @@ Flag these in a red "Fix Before Anything Else" box in the report.
 
 ## Step 5 — Generate Reports
 
-Write `ECOM-AUDIT-REPORT.md` and `ACTION-PLAN.md` to the current directory.
+Write `ECOM-AUDIT-REPORT.md` and `ACTION-PLAN.md` to the current
+directory.
 
-Then delegate to the `ecom-report` agent (`agents/ecom-report.md`) which will:
-1. Run `scripts/extract_brand.py <url> --download-logo` to get brand colors and logo
-2. Run `scripts/ecom_report.py` with the full scores JSON and brand signals:
-```
-scripts/ecom_report.py \
-  --report ECOM-AUDIT-REPORT.md \
-  --action-plan ACTION-PLAN.md \
-  --scores '{"overall": <score>, "categories": {...}}' \
-  --url <url> \
-  --platform <platform> \
-  --brand-color <primary_color> \
-  --store-name "<store_name>" \
-  --store-description "<description>" \
-  --logo <logo_path> \
-  --output ecom-report.pdf
-```
+Then delegate to the `ecom-report` agent (`agents/ecom-report.md`)
+which will:
+1. Run `scripts/extract_brand.py <url> --download-logo` for brand
+   color and logo.
+2. Run `scripts/ecom_report.py` with the full scores JSON and brand
+   signals to generate `ecom-report.pdf`.
 
 ## Report Structure
 
@@ -104,41 +84,32 @@ scripts/ecom_report.py \
 - Store name + URL
 - Platform + date
 - Overall ECOM Health Score (large, colored)
-- Score per category (dashboard)
+- 5 category scores
 
 ### Existential Issues Box
 Any Critical issues that block all other progress.
 
 ### Executive Summary
-- Business type detected
 - Top 5 critical issues
 - Top 5 quick wins (under 1 hour each)
 
-### Section 1: First Impression (Header + Hero)
-### Section 2: Product Presentation
-### Section 3: Conversion Rate Optimization
-### Section 4: Offer & Pricing Strategy
-### Section 5: Trust & Social Proof
-### Section 6: Mobile Experience
-### Section 7: Copy & Messaging
-### Section 8: Retention & Email
-### Section 9: Performance
-### Section 10: Competitor Positioning
+### Section 1: Storefront
+### Section 2: Products
+### Section 3: Conversion
+### Section 4: Trust & Offers
+### Section 5: Performance
 
 Each section: pass/fail table → critical findings → ready-to-use fixes → code snippets.
 
 ### 30-Day Sprint Plan
 Week-by-week checklist with effort and impact labels.
 
-### Expected Score Trajectory
-Table: current score → after each week of fixes.
-
 ## Error Handling
 
 | Scenario | Response |
 |---|---|
 | URL returns 4xx/5xx | Report error, ask user to verify URL |
-| Geo-blocked (returns error page to crawler) | Flag as CRITICAL — same as google-bot blocking |
-| JS-only rendering (empty HTML body) | Note CSR limitation; analyze what IS accessible; flag AI/crawler impact |
+| Geo-blocked (returns error page to crawler) | Flag as CRITICAL |
+| JS-only rendering (empty HTML body) | Note CSR limitation; analyze what IS accessible |
 | No products found | Report thin catalog; flag as HIGH issue |
 | Timeout | Analyze partial content; note limitations in report |
