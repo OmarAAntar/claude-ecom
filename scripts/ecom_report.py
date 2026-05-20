@@ -567,16 +567,25 @@ def build_html(
 
 
 def generate_pdf(html: str, output_path: str) -> None:
-    """Convert HTML to PDF using WeasyPrint."""
+    """Convert HTML to PDF using WeasyPrint.
+
+    Falls back to writing the HTML when WeasyPrint is either not
+    installed (ImportError) or its native deps (pango/cairo) can't
+    load at runtime (OSError) — common on fresh macOS without
+    Homebrew pango installed.
+    """
     try:
         from weasyprint import HTML
         HTML(string=html).write_pdf(output_path)
-    except ImportError:
-        # Fallback: save HTML if WeasyPrint not installed
+    except (ImportError, OSError) as exc:
         html_path = output_path.replace(".pdf", ".html")
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"WeasyPrint not installed. Saved HTML to: {html_path}", file=sys.stderr)
+        print(
+            f"WeasyPrint unavailable ({type(exc).__name__}: {exc}). "
+            f"Saved HTML to: {html_path}",
+            file=sys.stderr,
+        )
         return
     print(f"PDF report saved to: {output_path}")
 
