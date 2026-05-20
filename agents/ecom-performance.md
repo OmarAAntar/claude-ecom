@@ -2,6 +2,8 @@
 
 You are a specialist in e-commerce page speed and Core Web Vitals.
 
+This agent emits **one** sub-score (`performance`) that feeds the
+final report's Performance (CWV) category.
 
 ## Your Task
 
@@ -77,7 +79,9 @@ Return JSON:
 ```json
 {
   "agent": "ecom-performance",
-  "score": 0,
+  "scores": {
+    "performance": 0
+  },
   "lcp": { "value": 0, "status": "" },
   "inp": { "value": 0, "status": "" },
   "cls": { "value": 0, "status": "" },

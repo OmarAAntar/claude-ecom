@@ -5,27 +5,47 @@ from the 5 audit agents and produce the final report and PDF.
 
 ## Your Task
 
-Receive JSON outputs from all 5 agents. Aggregate scores, identify
-patterns, and write:
+Receive JSON outputs from all 5 agents. Each agent now emits one or
+more sub-scores in a `scores` object. Aggregate the **9 sub-scores**
+across the 5 agents into the final ECOM Health Score, then write:
+
 1. `ECOM-AUDIT-REPORT.md` — Full findings
 2. `ACTION-PLAN.md` — Prioritized checklist
 3. Trigger `scripts/ecom_report.py` to generate `ecom-report.pdf`
 
+## Sub-Score Sources
+
+| Sub-score | Source agent | Source JSON field |
+|---|---|---|
+| `first_impression` | ecom-storefront | `scores.first_impression` |
+| `copy` | ecom-storefront | `scores.copy` |
+| `products` | ecom-products | `scores.products` |
+| `cro` | ecom-conversion | `scores.cro` |
+| `mobile` | ecom-conversion | `scores.mobile` |
+| `trust` | ecom-trust-offers | `scores.trust` |
+| `offers` | ecom-trust-offers | `scores.offers` |
+| `retention` | ecom-trust-offers | `scores.retention` |
+| `performance` | ecom-performance | `scores.performance` |
+
 ## Score Aggregation
 
-Apply weights to compute the ECOM Health Score:
+Apply the 9 weights to compute the ECOM Health Score:
 
 ```
 ecom_health = (
-  conversion_score    * 0.30 +
-  products_score      * 0.25 +
-  trust_offers_score  * 0.18 +
-  storefront_score    * 0.15 +
-  performance_score   * 0.12
+  products_score       * 0.18 +
+  cro_score            * 0.18 +
+  offers_score         * 0.13 +
+  trust_score          * 0.12 +
+  mobile_score         * 0.10 +
+  performance_score    * 0.10 +
+  first_impression_score * 0.08 +
+  copy_score           * 0.06 +
+  retention_score      * 0.05
 )
 ```
 
-Weights sum to 1.0. Verified: 0.30 + 0.25 + 0.18 + 0.15 + 0.12 = 1.00.
+Verify: 0.18 + 0.18 + 0.13 + 0.12 + 0.10 + 0.10 + 0.08 + 0.06 + 0.05 = 1.00.
 
 ## ECOM-AUDIT-REPORT.md Structure
 
@@ -42,11 +62,15 @@ Weights sum to 1.0. Verified: 0.30 + 0.25 + 0.18 + 0.15 + 0.12 = 1.00.
 
 | Category | Score | Weight |
 |---|---|---|
-| Conversion | XX/100 | 30% |
-| Products | XX/100 | 25% |
-| Trust & Offers | XX/100 | 18% |
-| Storefront | XX/100 | 15% |
-| Performance | XX/100 | 12% |
+| Product Presentation | XX/100 | 18% |
+| Conversion Rate Optimization | XX/100 | 18% |
+| Offer & Pricing Strategy | XX/100 | 13% |
+| Trust & Social Proof | XX/100 | 12% |
+| Mobile Experience | XX/100 | 10% |
+| Performance (CWV) | XX/100 | 10% |
+| First Impression | XX/100 | 8% |
+| Copy & Messaging | XX/100 | 6% |
+| Retention & Email | XX/100 | 5% |
 
 ---
 
@@ -75,20 +99,32 @@ Weights sum to 1.0. Verified: 0.30 + 0.25 + 0.18 + 0.15 + 0.12 = 1.00.
 
 ---
 
-## Section 1: Storefront
-[storefront analysis — H1, hero CTA, announcement bar, nav, copy markers]
+## Section 1: First Impression
+[hero CTA above fold, contrast, single primary CTA, hero image, announcement bar offer, logo, nav, cart + search, in-fold trust signal]
 
-## Section 2: Products
-[products analysis — descriptions, images, schema, reviews, ATC]
+## Section 2: Copy & Messaging
+[H1 quality + suggested rewrite, subheadline, CTA copy specificity, AI-content markers found, unsubstantiated superlatives found]
 
-## Section 3: Conversion
-[conversion analysis — ATC, sticky-ATC mobile, checkout, exit intent]
+## Section 3: Product Presentation
+[product page analysis — descriptions, images, schema, reviews, ATC, Lebanese delivery context]
 
-## Section 4: Trust & Offers
-[trust + offers + upsells analysis — reviews, COD/WhatsApp/Whish, bundles, upsell stack]
+## Section 4: Conversion Rate Optimization
+[ATC quality desktop, guest checkout, step count, form fields, cart UX, exit intent, purchase barriers]
 
-## Section 5: Performance
-[performance analysis with code fixes — LCP, INP, CLS]
+## Section 5: Mobile Experience
+[sticky ATC, tap targets, no horizontal scroll, ≥16px body font]
+
+## Section 6: Trust & Social Proof
+[reviews, guarantee, return policy, COD / WhatsApp / Whish / dual currency / courier, payment icons, founder]
+
+## Section 7: Offer & Pricing Strategy
+[price anchoring, free-shipping threshold, bundles, pre-purchase upsells]
+
+## Section 8: Retention & Email
+[post-purchase 1-click upsell offer]
+
+## Section 9: Performance (CWV)
+[LCP / INP / CLS / FCP / TTFB analysis with code fixes]
 ```
 
 ## ACTION-PLAN.md Structure
@@ -142,11 +178,28 @@ Parse the JSON output:
 
 ### Step 2 — Generate PDF
 
+Pass all 9 category scores in the `categories` object so the PDF
+dashboard renders one row per category. Category names in the JSON
+should match the headings in the report exactly:
+
 ```
 python scripts/ecom_report.py \
   --report ECOM-AUDIT-REPORT.md \
   --action-plan ACTION-PLAN.md \
-  --scores '{"overall": XX, "categories": {...}}' \
+  --scores '{
+    "overall": XX,
+    "categories": {
+      "Product Presentation": XX,
+      "Conversion Rate Optimization": XX,
+      "Offer & Pricing Strategy": XX,
+      "Trust & Social Proof": XX,
+      "Mobile Experience": XX,
+      "Performance (CWV)": XX,
+      "First Impression": XX,
+      "Copy & Messaging": XX,
+      "Retention & Email": XX
+    }
+  }' \
   --url [url] \
   --platform [platform] \
   --output ecom-report.pdf \
@@ -158,3 +211,7 @@ python scripts/ecom_report.py \
 
 Omit any flag whose value is null/missing. Confirm the PDF path and
 report it to the user.
+
+`scripts/ecom_report.py` is data-driven and will render however many
+category rows you pass in the `categories` object — no code change
+needed when categories change.

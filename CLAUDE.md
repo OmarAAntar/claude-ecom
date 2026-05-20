@@ -53,11 +53,13 @@ claude-ecom/
   → fetch homepage + mobile HTML + 2-3 product pages
   → detect platform (Shopify / WooCommerce / custom)
   → spawn 5 agents in parallel:
-      ecom-storefront, ecom-products, ecom-conversion,
-      ecom-trust-offers, ecom-performance
-  → collect scores
-  → compute weighted ECOM Health Score
-  → generate PDF via ecom_report.py
+      ecom-storefront     → first_impression, copy
+      ecom-products       → products
+      ecom-conversion     → cro, mobile
+      ecom-trust-offers   → trust, offers, retention
+      ecom-performance    → performance
+  → aggregate the 9 sub-scores using the 9-category weights below
+  → generate PDF via ecom_report.py (9-row category dashboard)
 ```
 
 Competitors are **not** spawned by default — they're an opt-in
@@ -67,13 +69,18 @@ Competitors are **not** spawned by default — they're an opt-in
 
 | Category | Weight |
 |---|---|
-| Conversion | 30% |
-| Products | 25% |
-| Trust & Offers | 18% |
-| Storefront | 15% |
-| Performance (CWV) | 12% |
+| Product Presentation | 18% |
+| Conversion Rate Optimization | 18% |
+| Offer & Pricing Strategy | 13% |
+| Trust & Social Proof | 12% |
+| Mobile Experience | 10% |
+| Performance (CWV) | 10% |
+| First Impression | 8% |
+| Copy & Messaging | 6% |
+| Retention & Email | 5% |
 
-Weights sum to 100.
+Weights sum to 100. The 9 category sub-scores are emitted by the 5
+execution agents (each agent produces 1–3 sub-scores per its rubric).
 
 ### Priority Tiers
 

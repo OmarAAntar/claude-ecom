@@ -10,7 +10,7 @@ Inspired by [claude-seo](https://github.com/AgriciDaniel/claude-seo).
 
 Drop a store URL, get back a scored audit report with:
 
-- **ECOM Health Score** (0–100) across 5 weighted categories
+- **ECOM Health Score** (0–100) across 9 weighted categories
 - **CRITICAL / HIGH / MEDIUM / LOW** issue lists with ready-to-paste fixes
 - **PDF action plan** with a 30-day sprint — professional A4 with charts and per-category score cards
 - **5 minutes end-to-end**, not 30+
@@ -20,11 +20,15 @@ Drop a store URL, get back a scored audit report with:
 ```
 ECOM Health Score: 51 / 100 — FAIR
 
-Conversion:        45/100
-Products:          55/100
-Trust & Offers:    48/100
-Storefront:        58/100
-Performance:       62/100
+Product Presentation:          55/100   18%
+Conversion Rate Optimization:  45/100   18%
+Offer & Pricing Strategy:      40/100   13%
+Trust & Social Proof:          54/100   12%
+Mobile Experience:             48/100   10%
+Performance (CWV):             62/100   10%
+First Impression:              60/100    8%
+Copy & Messaging:              56/100    6%
+Retention & Email:             25/100    5%
 ```
 
 ## Install
@@ -57,19 +61,37 @@ cd claude-ecom
 
 ## Architecture
 
-5 specialist agents run in parallel against one round of HTML fetches:
+5 specialist agents execute the audit in parallel against one round
+of HTML fetches. Each agent emits one or more sub-scores; the report
+aggregator combines them into a 9-category weighted dashboard.
 
-| Agent | File | Weight |
+**Agents → sub-scores**
+
+| Agent | File | Sub-scores emitted |
 |---|---|---|
-| Conversion | `agents/ecom-conversion.md` | 30% |
-| Products | `agents/ecom-products.md` | 25% |
-| Trust & Offers | `agents/ecom-trust-offers.md` | 18% |
-| Storefront | `agents/ecom-storefront.md` | 15% |
-| Performance | `agents/ecom-performance.md` | 12% |
+| Storefront | `agents/ecom-storefront.md` | `first_impression`, `copy` |
+| Products | `agents/ecom-products.md` | `products` |
+| Conversion | `agents/ecom-conversion.md` | `cro`, `mobile` |
+| Trust & Offers | `agents/ecom-trust-offers.md` | `trust`, `offers`, `retention` |
+| Performance | `agents/ecom-performance.md` | `performance` |
 
-Weights sum to 100. Competitors is intentionally **not** in the
-default audit — it's the slowest leg (web search across multiple
-domains) and most users don't need it on every run.
+**ECOM Health Score weights**
+
+| Category | Weight |
+|---|---|
+| Product Presentation | 18% |
+| Conversion Rate Optimization | 18% |
+| Offer & Pricing Strategy | 13% |
+| Trust & Social Proof | 12% |
+| Mobile Experience | 10% |
+| Performance (CWV) | 10% |
+| First Impression | 8% |
+| Copy & Messaging | 6% |
+| Retention & Email | 5% |
+
+Sum: 100. Competitors is intentionally **not** in the default audit —
+it's the slowest leg (web search across multiple domains) and most
+users don't need it on every run.
 
 ## Output Files
 

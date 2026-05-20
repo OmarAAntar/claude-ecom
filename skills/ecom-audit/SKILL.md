@@ -29,13 +29,16 @@ Use the Agent tool in a single message to spawn all 5 simultaneously.
 Pass each agent the relevant HTML, the detected platform, and the
 store URL.
 
-| Agent | File | Inputs | Analyzes |
+5 agents execute. Each returns one or more sub-scores. Together they
+produce the 9 sub-scores that feed the final ECOM Health Score.
+
+| Agent | Sub-scores emitted | Inputs | Analyzes |
 |---|---|---|---|
-| Storefront | `agents/ecom-storefront.md` | Homepage HTML | H1 + value prop, hero CTA, announcement bar, nav, AI-content markers, superlatives |
-| Products | `agents/ecom-products.md` | Top 2–3 product page HTMLs | Description quality, images, schema, reviews, ATC visibility, Lebanese delivery context |
-| Conversion | `agents/ecom-conversion.md` | Product + cart + checkout HTML (desktop + mobile) | ATC, sticky-ATC mobile, tap targets, checkout step count, guest checkout, exit intent |
-| Trust & Offers | `agents/ecom-trust-offers.md` | Homepage + product page HTML | Reviews, policies, Lebanon trust signals (COD / WhatsApp / Whish / dual currency), pricing anchoring, bundles, upsell stack |
-| Performance | `agents/ecom-performance.md` | PageSpeed Insights JSON + homepage HTML | Mobile LCP / INP / CLS, render-blocking scripts, image optimization, Lebanon TTFB note |
+| Storefront | `first_impression`, `copy` | Homepage HTML | Hero composition + nav + in-fold trust (first_impression); H1, subheadline, CTA copy, AI markers, superlatives (copy) |
+| Products | `products` | Top 2–3 product page HTMLs | Description quality, images, schema, reviews, ATC visibility, Lebanese delivery context |
+| Conversion | `cro`, `mobile` | Product + cart + checkout HTML (desktop + mobile) | ATC, checkout, cart UX, purchase barriers (cro); sticky ATC, tap targets, no horizontal scroll, ≥16px font (mobile) |
+| Trust & Offers | `trust`, `offers`, `retention` | Homepage + product page HTML | Reviews + policies + Lebanon signals (trust); pricing + bundles + pre-purchase upsells (offers); post-purchase 1-click upsell (retention) |
+| Performance | `performance` | PageSpeed Insights JSON + homepage HTML | Mobile LCP / INP / CLS, render-blocking scripts, image optimization, Lebanon TTFB note |
 
 **Competitors are opt-in.** Do not spawn `agents/ecom-competitors.md`
 during the default `/ecom audit` flow. Users who want a competitive
@@ -44,17 +47,22 @@ audit under 5 minutes — competitor scans are the slowest leg.
 
 ## Step 3 — Compute ECOM Health Score
 
-Collect scores from the 5 agents. Apply weights:
+Collect the 9 sub-scores from the 5 agents. Apply weights:
 
-| Category | Agent | Weight |
-|---|---|---|
-| Conversion | ecom-conversion | 30% |
-| Products | ecom-products | 25% |
-| Trust & Offers | ecom-trust-offers | 18% |
-| Storefront | ecom-storefront | 15% |
-| Performance (CWV) | ecom-performance | 12% |
+| Category | Sub-score | Source agent | Weight |
+|---|---|---|---|
+| Product Presentation | `products` | ecom-products | 18% |
+| Conversion Rate Optimization | `cro` | ecom-conversion | 18% |
+| Offer & Pricing Strategy | `offers` | ecom-trust-offers | 13% |
+| Trust & Social Proof | `trust` | ecom-trust-offers | 12% |
+| Mobile Experience | `mobile` | ecom-conversion | 10% |
+| Performance (CWV) | `performance` | ecom-performance | 10% |
+| First Impression | `first_impression` | ecom-storefront | 8% |
+| Copy & Messaging | `copy` | ecom-storefront | 6% |
+| Retention & Email | `retention` | ecom-trust-offers | 5% |
 
-Sum = 100. Overall = sum of (score × weight).
+Sum = 100. Overall = sum of (sub_score × weight).
+Verify: 18 + 18 + 13 + 12 + 10 + 10 + 8 + 6 + 5 = 100.
 
 ## Step 4 — Identify Critical Issues
 
@@ -84,7 +92,7 @@ which will:
 - Store name + URL
 - Platform + date
 - Overall ECOM Health Score (large, colored)
-- 5 category scores
+- 9 category scores in the dashboard
 
 ### Existential Issues Box
 Any Critical issues that block all other progress.
@@ -93,11 +101,15 @@ Any Critical issues that block all other progress.
 - Top 5 critical issues
 - Top 5 quick wins (under 1 hour each)
 
-### Section 1: Storefront
-### Section 2: Products
-### Section 3: Conversion
-### Section 4: Trust & Offers
-### Section 5: Performance
+### Section 1: First Impression
+### Section 2: Copy & Messaging
+### Section 3: Product Presentation
+### Section 4: Conversion Rate Optimization
+### Section 5: Mobile Experience
+### Section 6: Trust & Social Proof
+### Section 7: Offer & Pricing Strategy
+### Section 8: Retention & Email
+### Section 9: Performance (CWV)
 
 Each section: pass/fail table → critical findings → ready-to-use fixes → code snippets.
 

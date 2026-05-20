@@ -45,13 +45,19 @@ Detect platform from HTML signals before auditing:
 
 | Category | Weight |
 |---|---|
-| Conversion | 30% |
-| Products | 25% |
-| Trust & Offers | 18% |
-| Storefront | 15% |
-| Performance (CWV) | 12% |
+| Product Presentation | 18% |
+| Conversion Rate Optimization | 18% |
+| Offer & Pricing Strategy | 13% |
+| Trust & Social Proof | 12% |
+| Mobile Experience | 10% |
+| Performance (CWV) | 10% |
+| First Impression | 8% |
+| Copy & Messaging | 6% |
+| Retention & Email | 5% |
 
-Sums to 100%.
+Sums to 100%. The 9 category sub-scores are emitted by the 5 audit
+agents — see `skills/ecom-audit/SKILL.md` for the agent → sub-score
+mapping.
 
 ## Output Standard
 
